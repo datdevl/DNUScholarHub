@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - StudyNotes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">📚 StudyNotes Admin</a>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <ul class="nav nav-tabs mb-4" id="adminTabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabDocs">Tài liệu</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabSubjects">Môn học</a></li>
+        </ul>
+
+        <!-- TAB TÀI LIỆU -->
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tabDocs">
+                <button class="btn btn-primary mb-3" onclick="showAddDocumentModal()"><i class="fas fa-plus"></i> Thêm tài liệu</button>
+                <table class="table table-hover" id="docsTable">
+                    <thead><tr><th>ID</th><th>Tiêu đề</th><th>Môn</th><th>Loại</th><th>Lượt xem</th><th>Hành động</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- TAB MÔN HỌC -->
+            <div class="tab-pane fade" id="tabSubjects">
+                <button class="btn btn-success mb-3" onclick="showAddSubjectModal()"><i class="fas fa-plus"></i> Thêm môn học</button>
+                <table class="table" id="subjectsTable">
+                    <thead><tr><th>Mã</th><th>Tên môn</th><th>Khoa</th><th>Tín chỉ</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade" id="formModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFormTitle">Thêm tài liệu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminForm">
+                        <!-- Dynamic fields added by JS -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="saveForm()">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const BASE_URL = "https://67f8f8c1b9e0d4a2c5f0b8c4.mockapi.io"; // Thay bằng MockAPI của bạn
+
+        let currentEditId = null;
+        let currentMode = 'tai_lieu';
+
+        async function loadAdminData() {
+            // Load documents
+            const docs = await fetch(`${BASE_URL}/tai_lieu`).then(r => r.json());
+            let html = '';
+            docs.forEach(d => {
+                html += `<tr>
+                    <td>${d.id}</td>
+                    <td>${d.tieu_de}</td>
+                    <td>${d.id_mon_hoc}</td>
+                    <td>${d.loai_tai_lieu}</td>
+                    <td>${d.so_luot_xem || 0}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="editDocument(${d.id})">Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteItem('tai_lieu', ${d.id})">Xóa</button>
+                    </td>
+                </tr>`;
+            });
+            document.querySelector('#docsTable tbody').innerHTML = html;
+
+            // Load subjects
+            const subs = await fetch(`${BASE_URL}/mon_hoc`).then(r => r.json());
+            html = '';
+            subs.forEach(s => {
+                html += `<tr><td>${s.ma_mon_hoc}</td><td>${s.ten_mon_hoc}</td><td>${s.khoa_vien}</td><td>${s.so_tin_chi}</td></tr>`;
+            });
+            document.querySelector('#subjectsTable tbody').innerHTML = html;
+        }
+
+        function showAddDocumentModal() {
+            currentMode = 'tai_lieu';
+            currentEditId = null;
+            document.getElementById('modalFormTitle').textContent = 'Thêm tài liệu mới';
+            const form = document.getElementById('adminForm');
+            form.innerHTML = `
+                <div class="mb-3"><input type="text" id="tieu_de" class="form-control" placeholder="Tiêu đề" required></div>
+                <div class="mb-3"><input type="number" id="id_mon_hoc" class="form-control" placeholder="ID Môn học" required></div>
+                <div class="mb-3"><input type="text" id="loai_tai_lieu" class="form-control" placeholder="Loại (Đề thi, Slide...)" required></div>
+                <div class="mb-3"><input type="text" id="nguoi_dang" class="form-control" placeholder="Người đăng" required></div>
+                <div class="mb-3"><input type="url" id="duong_dan_file" class="form-control" placeholder="Link Google Drive" required></div>
+                <div class="mb-3"><input type="url" id="anh_bia" class="form-control" placeholder="Link ảnh bìa" required></div>
+            `;
+            new bootstrap.Modal(document.getElementById('formModal')).show();
+        }
+
+        async function saveForm() {
+            const form = document.getElementById('adminForm');
+            const data = {};
+            form.querySelectorAll('input').forEach(inp => {
+                data[inp.id] = inp.type === 'number' ? Number(inp.value) : inp.value;
+            });
+
+            if (currentEditId) {
+                await fetch(`${BASE_URL}/${currentMode}/${currentEditId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+            } else {
+                await fetch(`${BASE_URL}/${currentMode}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+            }
+            bootstrap.Modal.getInstance(document.getElementById('formModal')).hide();
+            loadAdminData();
+        }
+
+        window.onload = loadAdminData;
+    </script>
+</body>
+</html>
