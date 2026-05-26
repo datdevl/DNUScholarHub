@@ -1,84 +1,89 @@
+# 📚 ScholarHub
 
+**ScholarHub** — Nền tảng chia sẻ và tìm kiếm tài liệu học tập trực tuyến cho sinh viên Đại học Đại Nam.
 
-# 📚 StudyNotes - Nền Tảng Chia Sẻ Tài Liệu Học Tập
+## ✨ Tính năng
 
-**StudyNotes** là giải pháp trực tuyến giúp sinh viên kết nối, chia sẻ và tìm kiếm tài liệu ôn thi một cách hiệu quả. Hệ thống cho phép phân loại tài liệu thông minh theo môn học và năm học, tạo nên một kho lưu trữ kiến thức cộng đồng giá trị.
+### 🌐 Public (Sinh viên)
 
------
+- Tìm tài liệu, lọc theo **môn học**, **năm học**, **loại tài liệu**
+- Xem mô tả, link download, đánh giá sao
+- Đánh dấu **yêu thích** (localStorage)
+- Đăng tải tài liệu (trạng thái `Pending` chờ duyệt)
+- Đếm **lượt xem** bằng `PUT` API
 
-## ✨ Tính Năng Cốt Lõi
+### ⚙️ Admin
 
-### 🌐 Cho Sinh Viên (Public)
+- Thêm / sửa / xóa tài liệu & môn học
+- Duyệt tài liệu: `Pending` → `Approved`
+- Thống kê lượt xem, lượt tải, top tài liệu
 
-  * **Tìm kiếm & Bộ lọc:** Tra cứu tài liệu nhanh chóng, lọc chính xác theo **Môn học** hoặc **Năm học**.
-  * **Chi tiết tài liệu:** Xem mô tả chi tiết, xem trước và truy cập link download.
-  * **Yêu thích:** Đánh dấu (Bookmark) các tài liệu quan trọng để xem lại sau.
-  * **Đóng góp:** Đăng tải tài liệu cá nhân để chia sẻ với cộng đồng.
+## 🛠 Tech Stack
 
-### ⚙️ Cho Quản Trị Viên (Admin)
+| # | Công nghệ | Đã áp dụng |
+|---|-----------|------------|
+| 1 | JavaScript thuần | Biến, if/for, hàm có tham số & return, DOM events, querySelector |
+| 2 | Fetch API | GET/POST/PUT/DELETE, `.then`/`.catch`, skeleton loading, xử lý lỗi |
+| 3 | Form Validation | Required, URL, inline error, chặn submit, reset form |
+| 4 | jQuery | Selector, `.on()`, fadeIn/slideDown, `$.ajax()` |
+| 5 | Bootstrap 5 | Grid, Navbar, Card, Modal, Badge, Toast, Table, Form |
+| 6 | MockAPI.io | `documents`, `subjects`, `nguoi_dung` |
+| 7 | Vercel | Deploy từ GitHub (xem hướng dẫn bên dưới) |
 
-  * **Quản lý nội dung:** Thêm, sửa, hoặc xóa các bản ghi tài liệu.
-  * **Kiểm duyệt (Moderation):** Hệ thống trạng thái `Pending` (Chờ duyệt) và `Approved` (Đã duyệt) để đảm bảo chất lượng nội dung.
-  * **Thống kê:** Theo dõi lượt xem và mức độ tương tác của từng tài liệu.
+## 📁 Cấu trúc
 
------
+```
+├── index.html          # Trang chủ
+├── documents.html      # Kho tài liệu + lọc
+├── subjects.html       # Danh mục môn học
+├── favorites.html      # Yêu thích
+├── upload.html         # Đăng tải
+├── login.html          # Đăng nhập demo
+├── about.html          # Giới thiệu
+├── admin.html          # Quản trị
+├── css/scholarhub.css
+└── js/
+    ├── config.js       # MockAPI URL
+    ├── api.js          # CRUD Fetch
+    ├── utils.js        # Toast, validation, favorites
+    ├── components.js   # Card, modal chi tiết
+    ├── jquery-ui.js    # Hiệu ứng jQuery
+    └── ...
+```
 
-## 🛠 Tech Stack (Đề xuất)
+## 🔗 MockAPI
 
-  * **Frontend:** HTML5, CSS3, JavaScript (ES6+), Tailwind CSS / Bootstrap.
-  * **Backend:** Node.js / PHP / Python (Django/Flask).
-  * **Database:** MySQL / MongoDB / PostgreSQL.
-  * **Icon:** FontAwesome / Boxicons.
+**Base URL:** `https://69fbe7b0fce564e25916fdc3.mockapi.io/api/v1`
 
------
+| Resource | Endpoint | Mô tả |
+|----------|----------|--------|
+| Tài liệu | `/documents` | `tieu_de`, `id_mon_hoc`, `loai_tai_lieu`, `trang_thai`, `nam_hoc`, `so_luot_xem`, ... |
+| Môn học | `/subjects` | `ten_mon_hoc`, `ma_mon_hoc`, `khoa_vien`, `so_tin_chi`, `mo_ta` |
+| Người dùng | `/nguoi_dung` | `ho_ten`, `email`, `anh_dai_dien`, `diem_tich_luy` |
 
-## 🚀 Cài Đặt & Sử Dụng
+Chỉnh URL trong `js/config.js` nếu bạn tạo project MockAPI mới.
 
-1.  **Clone dự án:**
-    ```bash
-    git clone https://github.com/username/StudyNotes.git
-    cd StudyNotes
-    ```
-2.  **Cài đặt môi trường:** (Ví dụ cho Node.js)
-    ```bash
-    npm install
-    ```
-3.  **Cấu hình Database:** Chỉnh sửa file `.env` với thông tin kết nối cơ sở dữ liệu của bạn.
-4.  **Chạy dự án:**
-    ```bash
-    npm start
-    ```
+## 🚀 Chạy local
 
------
+Mở `index.html` bằng Live Server hoặc:
 
-## 📸 Giao Diện Dự Kiến
+```bash
+npx serve .
+```
 
-| Trang Chủ (Tìm kiếm) | Trang Admin (Kiểm duyệt) |
-| :--- | :--- |
-|  |  |
+## ☁️ Deploy Vercel
 
------
+1. Push code lên GitHub (public)
+2. Vào [vercel.com](https://vercel.com) → Import repository
+3. Framework: **Other** (static HTML)
+4. Deploy → lấy link demo
 
-## 🤝 Đóng Góp
+## 🔐 Demo đăng nhập
 
-Mọi đóng góp cho dự án đều được trân trọng\!
+- **Admin:** `admin@scholarhub.vn` / `admin123` → chuyển tới `admin.html`
+- **Sinh viên:** email bất kỳ → `index.html`
 
-1.  Fork dự án.
-2.  Tạo nhánh tính năng (`git checkout -b feature/AmazingFeature`).
-3.  Commit thay đổi (`git commit -m 'Add some AmazingFeature'`).
-4.  Push lên nhánh (`git push origin feature/AmazingFeature`).
-5.  Mở Pull Request.
+---
 
------
-
-## 📞 Liên Hệ
-
-  * **Tác giả:** [Tên của bạn]
-  * **Email:** your-email@example.com
-  * **Dự án:** [Link đến Repo](https://www.google.com/search?q=https://github.com/your-username/StudyNotes)
-
------
-
-*Made with ❤️ for students.*
-
-Bạn có muốn tôi bổ sung thêm phần cấu trúc thư mục (Folder Structure) hay hướng dẫn chi tiết về API cho file này không?
+*Made with ❤️ for DNU students — Nhóm 11 FIT*
+"# ScholarHub" 
