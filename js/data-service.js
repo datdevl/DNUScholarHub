@@ -4,7 +4,10 @@
 const DATA_KEYS = {
     subjects: "scholarhub_mon_hoc",
     seeded: "scholarhub_demo_seeded_v2",
-    localUsers: "scholarhub_local_users"
+    localUsers: "scholarhub_local_users",
+    localDocuments: "scholarhub_local_documents",
+    examSettings: "scholarhub_exam_settings",
+    reports: "scholarhub_reports"
 };
 
 function isJunkDocument(doc) {
@@ -31,6 +34,8 @@ function normalizeLoaiTaiLieu(raw) {
 
 function normalizeDocument(doc) {
     const title = doc.tieu_de || doc.ten_tai_lieu || "Tài liệu học tập";
+    const statusRaw = String(doc.trang_thai || SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED).toLowerCase();
+    const status = statusRaw === "pending" ? SCHOLARHUB_CONFIG.DOC_STATUS.PENDING : SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED;
     return {
         ...doc,
         id: doc.id,
@@ -47,9 +52,41 @@ function normalizeDocument(doc) {
         nam_hoc: doc.nam_hoc || "2024-2025",
         mo_ta: doc.mo_ta || "",
         gia_xu: doc.gia_xu != null ? Number(doc.gia_xu) : 0,
-        trang_thai: doc.trang_thai || SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED,
+        trang_thai: status,
         ngay_tao: doc.ngay_tao || new Date().toISOString().split("T")[0]
     };
+}
+
+function getLocalDocuments() {
+    try {
+        const raw = localStorage.getItem(DATA_KEYS.localDocuments);
+        const arr = JSON.parse(raw || "[]");
+        return Array.isArray(arr) ? arr.map(normalizeDocument) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveLocalDocuments(list) {
+    localStorage.setItem(DATA_KEYS.localDocuments, JSON.stringify(list || []));
+}
+
+function upsertLocalDocument(doc) {
+    const list = getLocalDocuments();
+    const id = String(doc.id);
+    const idx = list.findIndex(function (item) {
+        return String(item.id) === id;
+    });
+    if (idx >= 0) list[idx] = normalizeDocument({ ...list[idx], ...doc });
+    else list.push(normalizeDocument(doc));
+    saveLocalDocuments(list);
+}
+
+function deleteLocalDocumentById(id) {
+    const list = getLocalDocuments().filter(function (item) {
+        return String(item.id) !== String(id);
+    });
+    saveLocalDocuments(list);
 }
 
 function getLocalSubjects() {
@@ -89,6 +126,26 @@ function saveLocalUsers(users) {
     localStorage.setItem(DATA_KEYS.localUsers, JSON.stringify(users));
 }
 
+function upsertLocalUserByIdentity(id, payload) {
+    const users = getLocalUsers();
+    const payloadEmail = String(payload.email || "").toLowerCase().trim();
+    let idx = users.findIndex(function (u) {
+        return String(u.id) === String(id);
+    });
+    if (idx < 0 && payloadEmail) {
+        idx = users.findIndex(function (u) {
+            return String(u.email || "").toLowerCase().trim() === payloadEmail;
+        });
+    }
+    if (idx >= 0) {
+        users[idx] = { ...users[idx], ...payload };
+    } else if (payloadEmail) {
+        users.push({ id: String(id), ...payload });
+    }
+    saveLocalUsers(users);
+    return idx >= 0 ? users[idx] : users[users.length - 1];
+}
+
 function ensureDemoLocalUsers() {
     let users = getLocalUsers();
     let changed = false;
@@ -125,31 +182,47 @@ function seedDocumentsToApi() {
         })
         .catch(function (err) {
             console.warn("Seed API:", err);
-            localStorage.setItem(DATA_KEYS.seeded, "done");
+            return Promise.resolve();
         });
+}
+
+function dedupeDocumentsByTitleAndImage(list) {
+    const seen = {};
+    const result = [];
+    for (let i = 0; i < list.length; i++) {
+        const d = normalizeDocument(list[i]);
+        const key = (String(d.tieu_de || "").toLowerCase().trim() + "|" + String(d.anh_bia || "").toLowerCase().trim());
+        if (seen[key]) continue;
+        seen[key] = true;
+        result.push(d);
+    }
+    return result;
 }
 
 function fetchAndNormalizeDocuments() {
     return api.getAllDocuments()
         .then(function (docs) {
-            const list = (docs || []).map(normalizeDocument).filter(function (d) {
+            const apiList = (docs || []).map(normalizeDocument).filter(function (d) {
                 return !isJunkDocument(d);
             });
-            if (list.length >= 6) {
-                return list;
+            const localList = getLocalDocuments();
+            let mergedList = dedupeDocumentsByTitleAndImage(apiList.concat(localList));
+            if (mergedList.length >= 6) {
+                return mergedList;
             }
             return seedDocumentsToApi().then(function () {
                 return api.getAllDocuments();
             }).then(function (all) {
-                const merged = (all || []).map(normalizeDocument).filter(function (d) {
+                const reseeded = (all || []).map(normalizeDocument).filter(function (d) {
                     return !isJunkDocument(d);
                 });
-                if (merged.length >= 6) return merged;
-                return SEED_DOCUMENTS.map(normalizeDocument);
+                mergedList = dedupeDocumentsByTitleAndImage(reseeded.concat(localList));
+                if (mergedList.length >= 6) return mergedList;
+                return dedupeDocumentsByTitleAndImage(SEED_DOCUMENTS.map(normalizeDocument).concat(localList));
             });
         })
         .catch(function () {
-            return SEED_DOCUMENTS.map(normalizeDocument);
+            return dedupeDocumentsByTitleAndImage(SEED_DOCUMENTS.map(normalizeDocument).concat(getLocalDocuments()));
         });
 }
 
@@ -248,18 +321,13 @@ function registerUserData(payload) {
 }
 
 function updateUserData(id, payload) {
-    const users = getLocalUsers();
-    const idx = users.findIndex(function (u) {
-        return String(u.id) === String(id);
-    });
-    if (idx >= 0) {
-        users[idx] = { ...users[idx], ...payload };
-        saveLocalUsers(users);
-    }
+    const localSaved = upsertLocalUserByIdentity(id, payload);
     if (String(id).indexOf("local") === 0) {
-        return Promise.resolve(users[idx] || payload);
+        return Promise.resolve(localSaved || payload);
     }
-    return api.updateUser(id, payload);
+    return api.updateUser(id, payload).catch(function () {
+        return localSaved || payload;
+    });
 }
 
 function createLocalSubject(data) {
@@ -313,3 +381,7 @@ window.normalizeApiUser = normalizeApiUser;
 window.createLocalSubject = createLocalSubject;
 window.updateLocalSubject = updateLocalSubject;
 window.deleteLocalSubject = deleteLocalSubject;
+window.getLocalDocuments = getLocalDocuments;
+window.saveLocalDocuments = saveLocalDocuments;
+window.upsertLocalDocument = upsertLocalDocument;
+window.deleteLocalDocumentById = deleteLocalDocumentById;

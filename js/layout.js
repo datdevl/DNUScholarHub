@@ -34,7 +34,7 @@ const NAV_SIDEBAR = [
     { id: "favorites", href: "favorites.html", icon: "fa-heart", label: "Yêu thích" },
     { id: "profile", href: "profile.html", icon: "fa-user", label: "Hồ sơ cá nhân" },
     { divider: true },
-    { id: "leaderboard", href: "profile.html#bang-xep-hang", icon: "fa-trophy", label: "Bảng xếp hạng" },
+    { id: "leaderboard", href: "leaderboard.html", icon: "fa-trophy", label: "Bảng xếp hạng" },
     { id: "wallet", href: "profile.html#nap-xu", icon: "fa-coins", label: "Nạp xu" }
 ];
 
@@ -85,7 +85,7 @@ function renderSidebar(activePage) {
         html += `<a href="${item.href}" class="sidebar-link${active}" data-nav="${item.id}"><i class="fa-solid ${item.icon}"></i>${item.label}</a>`;
     }
     html += `<div class="sidebar-social">
-        <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://www.facebook.com/datdevl" target="_blank" rel="noopener" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
         <a href="#" title="Zalo"><i class="fa-solid fa-comment"></i></a>
         <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
     </div></nav>`;
@@ -96,7 +96,7 @@ function renderRightbar() {
     return `
     <aside class="app-rightbar-inner">
         <div class="countdown-box">
-            <div class="widget-title text-white mb-2" style="font-size:.85rem">Đếm ngược kỳ thi</div>
+            <div class="widget-title text-white mb-2" style="font-size:.85rem" id="exam-title">Đếm ngược kỳ thi</div>
             <div class="countdown-grid" id="exam-countdown">
                 <div class="countdown-item"><span class="num" id="cd-days">0</span><span class="lbl">Ngày</span></div>
                 <div class="countdown-item"><span class="num" id="cd-hours">00</span><span class="lbl">Giờ</span></div>
@@ -118,7 +118,25 @@ function renderRightbar() {
             <input type="tel" class="form-control form-control-sm" id="consult-phone" placeholder="Số điện thoại">
             <button type="button" class="btn btn-light btn-sm mt-1" id="btn-consult">Gửi yêu cầu</button>
         </div>
+        <div class="lecturer-rail">
+            <div class="lecturer-track" id="lecturer-track">
+                ${renderLecturerCard("https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&h=300&fit=crop","TS. Nguyễn Minh Đức","Giảng viên Khoa CNTT","Chuyên ngành: Khoa học dữ liệu")}
+                ${renderLecturerCard("https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=300&h=300&fit=crop","ThS. Lê Thu Hà","Giảng viên Bộ môn CSDL","Chuyên ngành: Cơ sở dữ liệu")}
+                ${renderLecturerCard("https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop","TS. Trần Minh Quân","Giảng viên Khoa CNTT","Chuyên ngành: AI ứng dụng")}
+            </div>
+        </div>
     </aside>`;
+}
+
+function renderLecturerCard(img, name, role, major) {
+    return `<div class="lecturer-mini-card">
+        <img src="${img}" alt="${escapeHtml(name)}">
+        <div class="lecturer-info">
+            <div class="name">${escapeHtml(name)}</div>
+            <div class="meta">${escapeHtml(role)}</div>
+            <div class="meta">${escapeHtml(major)}</div>
+        </div>
+    </div>`;
 }
 
 function renderFooter() {
@@ -129,7 +147,7 @@ function renderFooter() {
                 <div class="col-md-3">
                     <h6>LIÊN HỆ</h6>
                     <p class="small mb-1 opacity-75">ScholarHub - DNU</p>
-                    <p class="small mb-1 opacity-75">Số 08, Nguyễn Văn Cừ, Đà Nẵng</p>
+                    <p class="small mb-1 opacity-75">Số 1 Phố Xốm, Hà Đông, Hà Nội</p>
                     <a href="mailto:scholarhub@dnu.edu.vn">scholarhub@dnu.edu.vn</a>
                 </div>
                 <div class="col-md-3">
@@ -153,7 +171,17 @@ function renderFooter() {
             <p class="small text-center mb-0 opacity-75">© Bản quyền thuộc về ScholarHub — Nhóm 11 FIT-DNU</p>
         </div>
     </footer>
-    <button type="button" class="floating-chat" title="Hỗ trợ" onclick="showToast('Chat hỗ trợ đang phát triển','info')"><i class="fa-solid fa-comments"></i></button>`;
+    <button type="button" class="floating-chat" title="Hỗ trợ" onclick="toggleSupportChat()"><i class="fa-solid fa-comments"></i></button>
+    <div class="support-chat-box d-none" id="support-chat-box">
+        <div class="support-chat-header">Hỗ trợ ScholarHub <button class="btn-close btn-close-white btn-sm" type="button" onclick="toggleSupportChat()"></button></div>
+        <div class="support-chat-body" id="support-chat-body">
+            <div class="chat-msg bot">Xin chào! Bạn cần hỗ trợ gì về tài liệu?</div>
+        </div>
+        <div class="support-chat-input">
+            <input type="text" id="support-chat-input" class="form-control form-control-sm" placeholder="Nhập câu hỏi...">
+            <button type="button" class="btn btn-primary btn-sm" id="support-chat-send">Gửi</button>
+        </div>
+    </div>`;
 }
 
 function initLayout(activePage, options) {
@@ -171,6 +199,7 @@ function initLayout(activePage, options) {
     initCountdown();
     loadLeaderboard();
     bindConsultForm();
+    initActivityTicker();
 }
 
 function updateHeaderUserUI() {
@@ -182,7 +211,10 @@ function updateHeaderUserUI() {
 }
 
 function initCountdown() {
-    const target = new Date(SCHOLARHUB_CONFIG.EXAM_COUNTDOWN).getTime();
+    const settings = getExamCountdownSettings();
+    const titleEl = document.getElementById("exam-title");
+    if (titleEl) titleEl.textContent = settings.title;
+    const target = new Date(settings.targetDate).getTime();
     function tick() {
         const now = Date.now();
         let diff = Math.max(0, target - now);
@@ -223,34 +255,140 @@ function loadLeaderboard() {
                 });
                 if (!exists) merged.push(normalizeApiUser(u));
             });
-            const list = merged.slice().sort(function (a, b) {
-                return (Number(b.diem_tich_luy) || Number(b.so_xu) || 0) - (Number(a.diem_tich_luy) || Number(a.so_xu) || 0);
-            });
-            const top = list.slice(0, 5);
-            if (top.length === 0) {
-                container.innerHTML = '<p class="small text-muted mb-0">Chưa có dữ liệu</p>';
-                return;
-            }
-            let html = "";
-            for (let i = 0; i < top.length; i++) {
-                const u = top[i];
-                const av = u.anh_dai_dien || SCHOLARHUB_CONFIG.DEFAULT_AVATARS[i % 6];
-                html += `<div class="leaderboard-item">
-                    <span class="leaderboard-rank">${i + 1}</span>
-                    <img src="${av}" class="leaderboard-avatar" alt="">
-                    <div class="flex-grow-1 min-width-0">
-                        <div class="fw-semibold text-truncate">${escapeHtml(u.ho_ten || "SV")}</div>
-                        <div class="text-muted" style="font-size:.7rem">${escapeHtml(u.truong_hoc || "DNU")}</div>
-                    </div>
-                    <span class="fw-bold text-primary">${Number(u.diem_tich_luy) || Number(u.so_xu) || 0}</span>
-                </div>`;
-            }
-            container.innerHTML = html;
+            renderLeaderboardByMode("week", merged, container);
+            bindLeaderboardTabs(merged, container);
         })
         .catch(function () {
             container.innerHTML = '<p class="small text-muted">Đang cập nhật...</p>';
         });
 }
+
+function renderLeaderboardByMode(mode, users, container) {
+    const list = users.slice().sort(function (a, b) {
+        const aVal = mode === "month" ? (Number(a.so_xu) || 0) : (Number(a.diem_tich_luy) || Number(a.so_xu) || 0);
+        const bVal = mode === "month" ? (Number(b.so_xu) || 0) : (Number(b.diem_tich_luy) || Number(b.so_xu) || 0);
+        return bVal - aVal;
+    });
+    const top = list.slice(0, 5);
+    if (top.length === 0) {
+        container.innerHTML = '<p class="small text-muted mb-0">Chưa có dữ liệu</p>';
+        return;
+    }
+    let html = "";
+    for (let i = 0; i < top.length; i++) {
+        const u = top[i];
+        const av = u.anh_dai_dien || SCHOLARHUB_CONFIG.DEFAULT_AVATARS[i % 6];
+        const score = mode === "month" ? (Number(u.so_xu) || 0) : (Number(u.diem_tich_luy) || Number(u.so_xu) || 0);
+        html += `<div class="leaderboard-item">
+            <span class="leaderboard-rank">${i + 1}</span>
+            <img src="${av}" class="leaderboard-avatar" alt="">
+            <div class="flex-grow-1 min-width-0">
+                <div class="fw-semibold text-truncate">${escapeHtml(u.ho_ten || "SV")}</div>
+                <div class="text-muted" style="font-size:.7rem">${escapeHtml(u.truong_hoc || "DNU")}</div>
+            </div>
+            <span class="fw-bold text-primary">${score}</span>
+        </div>`;
+    }
+    container.innerHTML = html;
+}
+
+function bindLeaderboardTabs(users, container) {
+    const tabs = document.querySelectorAll("#lb-tabs [data-lb]");
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            tabs.forEach(function (t) { t.classList.remove("active"); });
+            tab.classList.add("active");
+            renderLeaderboardByMode(tab.getAttribute("data-lb"), users, container);
+        });
+    });
+}
+
+function getExamCountdownSettings() {
+    try {
+        const raw = localStorage.getItem("scholarhub_exam_settings");
+        const cfg = JSON.parse(raw || "{}");
+        return {
+            title: cfg.title || "Đếm ngược kỳ thi",
+            targetDate: cfg.targetDate || SCHOLARHUB_CONFIG.EXAM_COUNTDOWN
+        };
+    } catch (e) {
+        return { title: "Đếm ngược kỳ thi", targetDate: SCHOLARHUB_CONFIG.EXAM_COUNTDOWN };
+    }
+}
+
+function toggleSupportChat() {
+    const box = document.getElementById("support-chat-box");
+    if (!box) return;
+    box.classList.toggle("d-none");
+    if (!box.classList.contains("d-none")) {
+        renderChatForCurrentUser();
+    }
+}
+
+function getCurrentChatUserKey() {
+    const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+    if (user && user.id) return String(user.id);
+    return "guest";
+}
+
+function getChatStore() {
+    try {
+        const all = JSON.parse(localStorage.getItem("scholarhub_chat_threads") || "{}");
+        return all && typeof all === "object" ? all : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveChatStore(store) {
+    localStorage.setItem("scholarhub_chat_threads", JSON.stringify(store || {}));
+}
+
+function appendChatMessage(userKey, sender, text) {
+    const store = getChatStore();
+    if (!store[userKey]) store[userKey] = [];
+    store[userKey].push({
+        id: "msg-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+        sender: sender,
+        text: text,
+        createdAt: new Date().toISOString()
+    });
+    saveChatStore(store);
+}
+
+function renderChatForCurrentUser() {
+    const body = document.getElementById("support-chat-body");
+    if (!body) return;
+    const userKey = getCurrentChatUserKey();
+    const store = getChatStore();
+    const msgs = store[userKey] || [];
+    if (!msgs.length) {
+        body.innerHTML = '<div class="chat-msg bot">Xin chào! Bạn cần hỗ trợ gì về tài liệu?</div>';
+        return;
+    }
+    body.innerHTML = msgs.map(function (m) {
+        return '<div class="chat-msg ' + (m.sender === "user" ? "user" : "bot") + '">' + escapeHtml(m.text) + "</div>";
+    }).join("");
+    body.scrollTop = body.scrollHeight;
+}
+
+document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "support-chat-send") {
+        const input = document.getElementById("support-chat-input");
+        const body = document.getElementById("support-chat-body");
+        const text = input && input.value ? input.value.trim() : "";
+        if (!text || !body) return;
+        const userKey = getCurrentChatUserKey();
+        appendChatMessage(userKey, "user", text);
+        input.value = "";
+        renderChatForCurrentUser();
+        showToast("Đã gửi tin nhắn tới admin", "success");
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    renderChatForCurrentUser();
+});
 
 function bindConsultForm() {
     const btn = document.getElementById("btn-consult");
@@ -266,7 +404,85 @@ function bindConsultForm() {
     });
 }
 
+function getActivityFeed() {
+    try {
+        const raw = localStorage.getItem("scholarhub_activity_feed");
+        const arr = JSON.parse(raw || "[]");
+        return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveActivityFeed(feed) {
+    localStorage.setItem("scholarhub_activity_feed", JSON.stringify(feed || []));
+}
+
+function publishUserActivity(action, target) {
+    const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+    if (!user || !user.id) return;
+    const feed = getActivityFeed();
+    feed.push({
+        id: "act-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+        user_id: String(user.id),
+        user_name: user.ho_ten || user.ten_dang_nhap || user.email || "Người dùng",
+        avatar: user.anh_dai_dien || (SCHOLARHUB_CONFIG.DEFAULT_AVATARS || [])[0] || "",
+        action: action,
+        target: target || "",
+        created_at: new Date().toISOString()
+    });
+    const clipped = feed.slice(-120);
+    saveActivityFeed(clipped);
+}
+
+function initActivityTicker() {
+    if (window.__activityTickerBound) return;
+    window.__activityTickerBound = true;
+
+    if (!sessionStorage.getItem("scholarhub_activity_last_seen")) {
+        sessionStorage.setItem("scholarhub_activity_last_seen", "0");
+    }
+
+    const poll = function () {
+        const feed = getActivityFeed();
+        if (!feed.length) return;
+        const lastSeen = Number(sessionStorage.getItem("scholarhub_activity_last_seen") || "0");
+        const next = feed.find(function (item) {
+            return new Date(item.created_at).getTime() > lastSeen;
+        });
+        if (!next) return;
+        showActivityToast(next);
+        sessionStorage.setItem("scholarhub_activity_last_seen", String(new Date(next.created_at).getTime()));
+    };
+
+    poll();
+    setInterval(poll, 4000);
+    window.addEventListener("storage", function (e) {
+        if (e.key === "scholarhub_activity_feed") poll();
+    });
+}
+
+function showActivityToast(item) {
+    let container = document.getElementById("activity-feed-container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "activity-feed-container";
+        container.className = "activity-feed-container";
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = "activity-toast";
+    toast.innerHTML = '<img src="' + escapeHtml(item.avatar || "") + '" alt=""><div class="activity-toast-content"><div class="activity-toast-user">' + escapeHtml(item.user_name || "Người dùng") + '</div><div class="activity-toast-text">' + escapeHtml(item.action || "đã thao tác") + (item.target ? ": " + escapeHtml(item.target) : "") + "</div></div>";
+    container.appendChild(toast);
+    setTimeout(function () {
+        toast.classList.add("hide");
+        setTimeout(function () { toast.remove(); }, 320);
+    }, 3600);
+}
+
 window.initLayout = initLayout;
 window.updateHeaderUserUI = updateHeaderUserUI;
 window.renderHeader = renderHeader;
 window.renderBrandLink = renderBrandLink;
+window.toggleSupportChat = toggleSupportChat;
+window.publishUserActivity = publishUserActivity;

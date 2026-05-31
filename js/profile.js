@@ -12,12 +12,14 @@ function loadProfile() {
 
     api.getUserById(user.id)
         .then(function (u) {
-            profileUser = u;
-            fillProfileForm(u);
-            renderAvatarSection(u.anh_dai_dien);
-            updateCoinDisplay(u);
+            const merged = { ...normalizeApiUser(u), ...user };
+            profileUser = merged;
+            fillProfileForm(merged);
+            renderAvatarSection(merged.anh_dai_dien);
+            updateCoinDisplay(merged);
         })
         .catch(function () {
+            profileUser = user;
             fillProfileForm(user);
             renderAvatarSection(user.anh_dai_dien);
             updateCoinDisplay(user);
@@ -104,6 +106,7 @@ function saveProfile(e) {
         .then(function () {
             const updated = { ...user, ...payload };
             setCurrentUser(updated);
+            profileUser = updated;
             showToast("Đã lưu thay đổi!", "success");
         })
         .catch(function () {

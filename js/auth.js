@@ -27,21 +27,45 @@ function isLoggedIn() {
 }
 
 function getPurchasedDocs() {
+    const user = getCurrentUser();
+    if (!user || !user.id) return [];
     try {
         const raw = localStorage.getItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.purchased);
-        const arr = JSON.parse(raw || "[]");
-        return Array.isArray(arr) ? arr : [];
+        const parsed = JSON.parse(raw || "{}");
+        if (Array.isArray(parsed)) {
+            // Migrate legacy global purchased list to neutral bucket,
+            // avoid granting all VIP docs to any newly logged in account.
+            const migrated = { "__legacy__": parsed.map(function (id) { return String(id); }) };
+            localStorage.setItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.purchased, JSON.stringify(migrated));
+            return [];
+        }
+        if (!parsed || typeof parsed !== "object") return [];
+        const list = parsed[String(user.id)];
+        return Array.isArray(list) ? list.map(function (id) { return String(id); }) : [];
     } catch (e) {
         return [];
     }
 }
 
 function addPurchasedDoc(docId) {
-    const ids = getPurchasedDocs();
+    const user = getCurrentUser();
+    if (!user || !user.id) return;
+    const uid = String(user.id);
+    let store = {};
+    try {
+        store = JSON.parse(localStorage.getItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.purchased) || "{}");
+        if (Array.isArray(store)) {
+            store = {};
+        }
+    } catch (e) {
+        store = {};
+    }
+    const ids = Array.isArray(store[uid]) ? store[uid].map(function (id) { return String(id); }) : [];
     const id = String(docId);
     if (ids.indexOf(id) < 0) {
         ids.push(id);
-        localStorage.setItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.purchased, JSON.stringify(ids));
+        store[uid] = ids;
+        localStorage.setItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.purchased, JSON.stringify(store));
     }
 }
 
@@ -98,6 +122,9 @@ function purchaseDocument(doc) {
         user.so_xu = newXu;
         setCurrentUser(user);
         addPurchasedDoc(doc.id);
+        if (typeof publishUserActivity === "function") {
+            publishUserActivity("da mua tai lieu VIP", doc.tieu_de || "");
+        }
         showToast("Đã mua tài liệu (-" + price + " xu)", "success");
         return true;
     });

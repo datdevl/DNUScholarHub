@@ -27,7 +27,12 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" id="login-password" required placeholder="123456">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="login-password" required placeholder="123456">
+                            <button class="btn btn-outline-secondary" type="button" id="btn-hold-show-pass">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                         <div class="field-error" id="login-password-error"></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 mb-2" id="btn-login">Đăng nhập</button>
@@ -50,6 +55,19 @@
     <script src="js/auth.js"></script>
     <script>
         ensureDemoLocalUsers();
+        (function bindHoldShowPassword() {
+            const passInput = document.getElementById("login-password");
+            const holdBtn = document.getElementById("btn-hold-show-pass");
+            if (!passInput || !holdBtn) return;
+            const show = function () { passInput.type = "text"; };
+            const hide = function () { passInput.type = "password"; };
+            holdBtn.addEventListener("mousedown", show);
+            holdBtn.addEventListener("touchstart", show);
+            holdBtn.addEventListener("mouseup", hide);
+            holdBtn.addEventListener("mouseleave", hide);
+            holdBtn.addEventListener("touchend", hide);
+            holdBtn.addEventListener("touchcancel", hide);
+        })();
 
         document.getElementById("login-form").addEventListener("submit", function (e) {
             e.preventDefault();

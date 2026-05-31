@@ -6,7 +6,7 @@ function buildDocCardHtml(doc, subjectName) {
     const fav = isFavorite(doc.id);
     const views = formatNumber(doc.so_luot_xem);
     const sub = subjectName || "";
-    const img = doc.anh_bia || "https://picsum.photos/seed/" + doc.id + "/400/240";
+    const img = getDocCoverUrl(doc, 400, 240);
     const price = getDocPrice(doc);
     const free = price === 0;
     const owned = hasPurchasedDoc(doc.id);
@@ -23,7 +23,7 @@ function buildDocCardHtml(doc, subjectName) {
         <div class="card doc-card h-100">
             <div class="card-img-wrap">
                 <img src="${escapeHtml(img)}" class="card-img-top" alt="${escapeHtml(doc.tieu_de)}"
-                     onerror="this.src='https://picsum.photos/400/240'">
+                     onerror="this.onerror=null;this.src='${escapeHtml(getDocFallbackCoverUrl(doc, 400, 240))}'">
                 ${badge}
                 ${owned && !free ? '<span class="purchased-badge position-absolute bottom-0 start-0 m-2">Đã mua</span>' : ""}
                 <button type="button" class="btn btn-sm btn-light btn-fav position-absolute top-0 end-0 m-2 ${fav ? "active" : ""}"
@@ -72,7 +72,7 @@ function openDocDetail(id) {
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
 
-    Promise.all([api.getDocumentById(id), getAllSubjectsData()])
+    Promise.all([getDocumentByIdSmart(id), getAllSubjectsData()])
         .then(function (results) {
             const doc = results[0];
             const subjects = results[1];
@@ -81,6 +81,7 @@ function openDocDetail(id) {
             const free = price === 0;
             const owned = canAccessDoc(doc);
             const user = getCurrentUser();
+            const userRating = getUserDocRating(doc.id);
 
             let actionHtml = "";
             if (free || owned) {
@@ -97,7 +98,8 @@ function openDocDetail(id) {
             body.innerHTML = `
                 <div class="row g-4">
                     <div class="col-md-5">
-                        <img src="${escapeHtml(doc.anh_bia || "https://picsum.photos/600/400")}" class="img-fluid rounded-3 w-100" alt="">
+                        <img src="${escapeHtml(getDocCoverUrl(doc, 600, 400))}" class="img-fluid rounded-3 w-100" alt=""
+                             onerror="this.onerror=null;this.src='${escapeHtml(getDocFallbackCoverUrl(doc, 600, 400))}'">
                         ${!free ? '<div class="mt-2"><span class="badge bg-warning text-dark"><i class="fa-solid fa-crown"></i> Tài liệu trả phí</span></div>' : ""}
                     </div>
                     <div class="col-md-7">
@@ -114,7 +116,19 @@ function openDocDetail(id) {
                             <li class="mb-1"><strong>Lượt xem:</strong> ${doc.so_luot_xem || 0}</li>
                             <li>${renderStars(doc.diem_danh_gia)}</li>
                         </ul>
+                        <div class="mt-2 mb-2">
+                            <div class="small fw-semibold mb-1">Đánh giá của bạn</div>
+                            <div id="doc-rating-actions">
+                                ${isLoggedIn() ? [1, 2, 3, 4, 5].map(function (s) {
+                const active = userRating >= s ? "text-warning" : "text-secondary";
+                return '<button type="button" class="btn btn-sm px-1 py-0 border-0 bg-transparent rate-star" data-score="' + s + '"><i class="fa-solid fa-star ' + active + '"></i></button>';
+            }).join("") : '<span class="text-muted small">Đăng nhập để đánh giá</span>'}
+                            </div>
+                        </div>
                         <div class="d-flex gap-2 mt-3 flex-wrap">${actionHtml}
+                            <button type="button" class="btn btn-outline-danger" id="btn-report-doc">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i>Báo cáo lỗi
+                            </button>
                             <button type="button" class="btn btn-outline-secondary btn-fav ${isFavorite(doc.id) ? "active" : ""}"
                                     onclick="handleToggleFavorite('${doc.id}', this)">
                                 <i class="fa-${isFavorite(doc.id) ? "solid" : "regular"} fa-bookmark"></i>
@@ -123,7 +137,7 @@ function openDocDetail(id) {
                     </div>
                 </div>`;
 
-            api.incrementView(id).catch(function () {});
+            incrementViewSmart(id);
 
             const buyBtn = document.getElementById("btn-buy-doc");
             if (buyBtn) {
@@ -142,13 +156,133 @@ function openDocDetail(id) {
             const dlBtn = document.getElementById("btn-download-doc");
             if (dlBtn) {
                 dlBtn.addEventListener("click", function () {
-                    api.incrementDownload(id).catch(function () {});
+                    incrementDownloadSmart(id);
+                    if (typeof publishUserActivity === "function") {
+                        publishUserActivity("da tai tai lieu", doc.tieu_de || "");
+                    }
                 });
             }
+            const reportBtn = document.getElementById("btn-report-doc");
+            if (reportBtn) {
+                reportBtn.addEventListener("click", function () {
+                    submitDocumentReport(doc);
+                });
+            }
+            document.querySelectorAll("#doc-rating-actions .rate-star").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    const score = Number(btn.getAttribute("data-score")) || 0;
+                    setUserDocRating(doc.id, score, doc.tieu_de || "");
+                    showToast("Đã lưu đánh giá " + score + " sao", "success");
+                    openDocDetail(id);
+                });
+            });
         })
         .catch(function () {
             body.innerHTML = `<div class="alert alert-danger mb-0">Không tải được chi tiết.</div>`;
         });
+}
+
+function getDocumentByIdSmart(id) {
+    return api.getDocumentById(id).catch(function () {
+        const local = (typeof getLocalDocuments === "function" ? getLocalDocuments() : []).find(function (d) {
+            return String(d.id) === String(id);
+        });
+        if (local) return local;
+        return Promise.reject(new Error("not_found"));
+    });
+}
+
+function incrementViewSmart(id) {
+    return api.incrementView(id).catch(function () {
+        const list = typeof getLocalDocuments === "function" ? getLocalDocuments() : [];
+        const idx = list.findIndex(function (d) { return String(d.id) === String(id); });
+        if (idx >= 0) {
+            list[idx].so_luot_xem = (Number(list[idx].so_luot_xem) || 0) + 1;
+            saveLocalDocuments(list);
+        }
+    });
+}
+
+function incrementDownloadSmart(id) {
+    return api.incrementDownload(id).catch(function () {
+        const list = typeof getLocalDocuments === "function" ? getLocalDocuments() : [];
+        const idx = list.findIndex(function (d) { return String(d.id) === String(id); });
+        if (idx >= 0) {
+            list[idx].so_luot_tai = (Number(list[idx].so_luot_tai) || 0) + 1;
+            saveLocalDocuments(list);
+        }
+    });
+}
+
+function submitDocumentReport(doc) {
+    const reason = prompt("Mô tả lỗi tài liệu để gửi admin:");
+    if (!reason || !reason.trim()) return;
+    const reports = JSON.parse(localStorage.getItem("scholarhub_reports") || "[]");
+    reports.push({
+        id: "rp-" + Date.now(),
+        doc_id: doc.id,
+        tieu_de: doc.tieu_de,
+        anh_bia: doc.anh_bia || "",
+        noi_dung: reason.trim(),
+        ngay_tao: new Date().toISOString()
+    });
+    localStorage.setItem("scholarhub_reports", JSON.stringify(reports));
+    if (typeof publishUserActivity === "function") {
+        publishUserActivity("da bao cao loi tai lieu", doc.tieu_de || "");
+    }
+    showToast("Đã gửi báo cáo tài liệu tới admin", "success");
+}
+
+function getRatingsStore() {
+    try {
+        const raw = localStorage.getItem("scholarhub_doc_ratings");
+        const obj = JSON.parse(raw || "{}");
+        return obj && typeof obj === "object" ? obj : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveRatingsStore(store) {
+    localStorage.setItem("scholarhub_doc_ratings", JSON.stringify(store || {}));
+}
+
+function getUserDocRating(docId) {
+    const user = getCurrentUser();
+    if (!user || !user.id) return 0;
+    const store = getRatingsStore();
+    const userRatings = store[String(user.id)] || {};
+    return Number(userRatings[String(docId)]) || 0;
+}
+
+function setUserDocRating(docId, value, title) {
+    const user = getCurrentUser();
+    if (!user || !user.id) return;
+    const store = getRatingsStore();
+    const uid = String(user.id);
+    if (!store[uid]) store[uid] = {};
+    store[uid][String(docId)] = Number(value) || 0;
+    saveRatingsStore(store);
+    if (typeof publishUserActivity === "function") {
+        publishUserActivity("da danh gia " + (Number(value) || 0) + " sao", title || "");
+    }
+}
+
+function getDocCoverUrl(doc, w, h) {
+    const raw = String((doc && doc.anh_bia) || "").trim();
+    if (raw) return raw;
+    return getDocFallbackCoverUrl(doc, w, h);
+}
+
+function getDocFallbackCoverUrl(doc, w, h) {
+    const width = Number(w) || 400;
+    const height = Number(h) || 240;
+    const seedBase = String((doc && doc.id) || (doc && doc.tieu_de) || "doc-cover")
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-_]/g, "");
+    const seed = seedBase || "doc-cover";
+    return "https://picsum.photos/seed/" + encodeURIComponent(seed) + "/" + width + "/" + height;
 }
 
 window.buildDocCardHtml = buildDocCardHtml;

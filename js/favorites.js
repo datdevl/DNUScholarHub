@@ -20,8 +20,8 @@ function loadFavoritesPage() {
                 const favDocs = [];
                 for (let i = 0; i < docs.length; i++) {
                     if (favIds.indexOf(String(docs[i].id)) >= 0) {
-                        const status = docs[i].trang_thai || "Approved";
-                        if (status === "Approved") favDocs.push(docs[i]);
+                        const status = String(docs[i].trang_thai || "Approved").toLowerCase();
+                        if (status === "approved") favDocs.push(docs[i]);
                     }
                 }
                 if (grid) {

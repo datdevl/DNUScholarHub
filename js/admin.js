@@ -4,6 +4,7 @@
 let adminTab = "stats";
 let adminEditId = null;
 let adminSubjectsList = [];
+let adminSelectedChatUser = null;
 
 function switchAdminTab(tab) {
     adminTab = tab;
@@ -11,8 +12,10 @@ function switchAdminTab(tab) {
         documents: document.getElementById("panel-documents"),
         subjects: document.getElementById("panel-subjects"),
         users: document.getElementById("panel-users"),
+        chats: document.getElementById("panel-chats"),
         stats: document.getElementById("panel-stats"),
-        pending: document.getElementById("panel-pending")
+        pending: document.getElementById("panel-pending"),
+        reports: document.getElementById("panel-reports")
     };
     const keys = Object.keys(panels);
     for (let i = 0; i < keys.length; i++) {
@@ -30,6 +33,8 @@ function loadAdminPanel() {
     else if (adminTab === "pending") loadAdminDocuments("pending", "admin-pending-body");
     else if (adminTab === "subjects") loadAdminSubjects();
     else if (adminTab === "users") loadAdminUsers();
+    else if (adminTab === "chats") loadAdminChats();
+    else if (adminTab === "reports") loadAdminReports();
     else if (adminTab === "stats") loadAdminStats();
 }
 
@@ -56,10 +61,45 @@ function loadAdminStats() {
             setText("stat-views", formatNumber(views));
             setText("stat-downloads", formatNumber(downloads));
             renderTopViews(docs);
+            fillExamSettingsForm();
         })
         .catch(function () {
             showToast("Không tải được thống kê", "error");
         });
+}
+
+function fillExamSettingsForm() {
+    try {
+        const cfg = JSON.parse(localStorage.getItem("scholarhub_exam_settings") || "{}");
+        const titleEl = document.getElementById("exam-title-admin");
+        const dateEl = document.getElementById("exam-date-admin");
+        if (titleEl) titleEl.value = cfg.title || "Đếm ngược kỳ thi";
+        if (dateEl) {
+            const dt = cfg.targetDate || SCHOLARHUB_CONFIG.EXAM_COUNTDOWN;
+            dateEl.value = toLocalDatetimeValue(dt);
+        }
+    } catch (e) {}
+}
+
+function toLocalDatetimeValue(input) {
+    const d = new Date(input);
+    if (isNaN(d.getTime())) return "";
+    const pad = function (n) { return String(n).padStart(2, "0"); };
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+
+function saveExamSettings() {
+    const title = (document.getElementById("exam-title-admin") || {}).value || "Đếm ngược kỳ thi";
+    const date = (document.getElementById("exam-date-admin") || {}).value;
+    if (!date) {
+        showToast("Vui lòng chọn thời gian đếm ngược", "error");
+        return;
+    }
+    localStorage.setItem("scholarhub_exam_settings", JSON.stringify({
+        title: title.trim(),
+        targetDate: new Date(date).toISOString()
+    }));
+    showToast("Đã lưu cấu hình đếm ngược", "success");
 }
 
 function setText(id, val) {
@@ -91,7 +131,7 @@ function loadAdminDocuments(mode, tbodyId) {
             let list = docs;
             if (mode === "pending") {
                 list = docs.filter(function (d) {
-                    return (d.trang_thai || "") === "Pending";
+                    return String(d.trang_thai || "").toLowerCase() === "pending";
                 });
             }
             if (list.length === 0) {
@@ -236,7 +276,9 @@ function deleteAdminDoc(id) {
             loadAdminPanel();
         })
         .catch(function () {
-            showToast("Xóa thất bại", "error");
+            deleteLocalDocumentById(id);
+            showToast("Đã xóa tài liệu local", "success");
+            loadAdminPanel();
         });
 }
 
@@ -468,6 +510,111 @@ function saveAdminForm() {
     }
 }
 
+function loadAdminReports() {
+    const tbody = document.getElementById("admin-reports-body");
+    if (!tbody) return;
+    let reports = [];
+    try {
+        reports = JSON.parse(localStorage.getItem("scholarhub_reports") || "[]");
+    } catch (e) {}
+    if (!reports.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Chưa có báo cáo</td></tr>';
+        return;
+    }
+    reports.sort(function (a, b) { return new Date(b.ngay_tao) - new Date(a.ngay_tao); });
+    tbody.innerHTML = reports.map(function (r) {
+        const img = r.anh_bia || "https://picsum.photos/80/56";
+        return "<tr><td>" + formatDate(r.ngay_tao) + "</td><td>" + escapeHtml(r.doc_id) + "</td><td><img src=\"" + escapeHtml(img) + "\" width=\"56\" height=\"40\" style=\"object-fit:cover;border-radius:6px\"></td><td>" + escapeHtml(r.tieu_de || "") + "</td><td>" + escapeHtml(r.noi_dung || "") + "</td><td><button class=\"btn btn-sm btn-outline-danger\" onclick=\"deleteReport('" + escapeHtml(r.id) + "')\"><i class=\"fa-solid fa-trash\"></i></button></td></tr>";
+    }).join("");
+}
+
+function deleteReport(id) {
+    let reports = [];
+    try {
+        reports = JSON.parse(localStorage.getItem("scholarhub_reports") || "[]");
+    } catch (e) {}
+    reports = reports.filter(function (r) { return String(r.id) !== String(id); });
+    localStorage.setItem("scholarhub_reports", JSON.stringify(reports));
+    loadAdminReports();
+    showToast("Đã xóa báo cáo", "success");
+}
+
+function getAdminChatStore() {
+    try {
+        const raw = localStorage.getItem("scholarhub_chat_threads");
+        const obj = JSON.parse(raw || "{}");
+        return obj && typeof obj === "object" ? obj : {};
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveAdminChatStore(store) {
+    localStorage.setItem("scholarhub_chat_threads", JSON.stringify(store || {}));
+}
+
+function loadAdminChats() {
+    const usersBox = document.getElementById("admin-chat-users");
+    const threadBox = document.getElementById("admin-chat-thread");
+    if (!usersBox || !threadBox) return;
+    const store = getAdminChatStore();
+    const userKeys = Object.keys(store).sort(function (a, b) {
+        const aList = store[a] || [];
+        const bList = store[b] || [];
+        const aTime = aList.length ? new Date(aList[aList.length - 1].createdAt).getTime() : 0;
+        const bTime = bList.length ? new Date(bList[bList.length - 1].createdAt).getTime() : 0;
+        return bTime - aTime;
+    });
+    if (!userKeys.length) {
+        usersBox.innerHTML = '<div class="list-group-item text-muted">Chưa có tin nhắn</div>';
+        threadBox.innerHTML = '<p class="text-muted mb-0">Chưa có hội thoại.</p>';
+        return;
+    }
+    usersBox.innerHTML = userKeys.map(function (key) {
+        const msgs = store[key] || [];
+        const last = msgs.length ? msgs[msgs.length - 1].text : "";
+        return '<button type="button" class="list-group-item list-group-item-action ' + (adminSelectedChatUser === key ? "active" : "") + '" onclick="openAdminChatThread(\'' + key + '\')"><div class="fw-semibold">' + escapeHtml(key) + '</div><small class="text-muted">' + escapeHtml(last) + "</small></button>";
+    }).join("");
+    if (!adminSelectedChatUser || !store[adminSelectedChatUser]) {
+        adminSelectedChatUser = userKeys[0];
+    }
+    openAdminChatThread(adminSelectedChatUser);
+}
+
+function openAdminChatThread(userKey) {
+    adminSelectedChatUser = userKey;
+    const titleEl = document.getElementById("admin-chat-title");
+    const threadBox = document.getElementById("admin-chat-thread");
+    if (!threadBox) return;
+    const store = getAdminChatStore();
+    const msgs = store[userKey] || [];
+    if (titleEl) titleEl.textContent = "Nội dung chat - " + userKey;
+    threadBox.innerHTML = msgs.map(function (m) {
+        const cls = m.sender === "admin" ? "bg-primary text-white text-end ms-auto" : "bg-light";
+        return '<div class="p-2 rounded mb-2 ' + cls + '" style="max-width:85%">' + escapeHtml(m.text) + "</div>";
+    }).join("");
+    threadBox.scrollTop = threadBox.scrollHeight;
+}
+
+function sendAdminReply() {
+    const input = document.getElementById("admin-chat-reply");
+    if (!input || !adminSelectedChatUser) return;
+    const text = input.value.trim();
+    if (!text) return;
+    const store = getAdminChatStore();
+    if (!store[adminSelectedChatUser]) store[adminSelectedChatUser] = [];
+    store[adminSelectedChatUser].push({
+        id: "admin-" + Date.now(),
+        sender: "admin",
+        text: text,
+        createdAt: new Date().toISOString()
+    });
+    saveAdminChatStore(store);
+    input.value = "";
+    loadAdminChats();
+    showToast("Đã gửi phản hồi cho user", "success");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     loadAdminPanel();
     document.querySelectorAll("[data-admin-tab]").forEach(function (btn) {
@@ -485,3 +632,7 @@ window.editAdminSubject = editAdminSubject;
 window.deleteAdminDoc = deleteAdminDoc;
 window.deleteAdminSubject = deleteAdminSubject;
 window.approveDoc = approveDoc;
+window.saveExamSettings = saveExamSettings;
+window.openAdminChatThread = openAdminChatThread;
+window.sendAdminReply = sendAdminReply;
+window.deleteReport = deleteReport;

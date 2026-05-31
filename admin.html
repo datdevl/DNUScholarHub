@@ -25,6 +25,8 @@
                     <button type="button" class="nav-link text-start border-0" data-admin-tab="pending"><i class="fa-solid fa-clock me-2"></i>Chờ duyệt</button>
                     <button type="button" class="nav-link text-start border-0" data-admin-tab="subjects"><i class="fa-solid fa-book me-2"></i>Môn học</button>
                     <button type="button" class="nav-link text-start border-0" data-admin-tab="users"><i class="fa-solid fa-users me-2"></i>Người dùng &amp; Xu</button>
+                    <button type="button" class="nav-link text-start border-0" data-admin-tab="chats"><i class="fa-solid fa-comments me-2"></i>Chat hỗ trợ</button>
+                    <button type="button" class="nav-link text-start border-0" data-admin-tab="reports"><i class="fa-solid fa-flag me-2"></i>Báo cáo tài liệu</button>
                 </nav>
                 <div class="p-3 mt-auto"><a href="index.html" class="btn btn-outline-light btn-sm w-100">← Về trang chủ</a></div>
             </aside>
@@ -47,6 +49,24 @@
                                 <thead><tr><th>#</th><th>Tiêu đề</th><th>Lượt xem</th><th>Lượt tải</th></tr></thead>
                                 <tbody id="top-views-body"></tbody>
                             </table>
+                        </div>
+                    </div>
+                    <div class="card border-0 shadow-sm mt-3">
+                        <div class="card-header bg-white fw-semibold">Cấu hình đếm ngược kỳ thi</div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <label class="form-label small">Tiêu đề</label>
+                                    <input type="text" id="exam-title-admin" class="form-control" placeholder="Ví dụ: Đếm ngược kỳ thi Tin học dữ liệu">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small">Thời gian</label>
+                                    <input type="datetime-local" id="exam-date-admin" class="form-control">
+                                </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button type="button" class="btn btn-primary w-100" onclick="saveExamSettings()">Lưu</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,6 +115,36 @@
                             <thead class="table-light"><tr><th>Mã</th><th>Tên môn</th><th>Khoa</th><th>TC</th><th></th></tr></thead>
                             <tbody id="admin-subjects-body"></tbody>
                         </table>
+                    </div>
+                </div>
+                <div id="panel-reports" class="d-none">
+                    <h1 class="h4 fw-bold mb-4">Báo cáo tài liệu từ người dùng</h1>
+                    <div class="table-responsive card border-0 shadow-sm">
+                        <table class="table table-hover mb-0 small">
+                            <thead class="table-light"><tr><th>Thời gian</th><th>ID tài liệu</th><th>Ảnh</th><th>Tiêu đề</th><th>Nội dung báo cáo</th><th></th></tr></thead>
+                            <tbody id="admin-reports-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="panel-chats" class="d-none">
+                    <h1 class="h4 fw-bold mb-4">Chat hỗ trợ người dùng</h1>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white fw-semibold">Danh sách hội thoại</div>
+                                <div class="list-group list-group-flush" id="admin-chat-users"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-white fw-semibold" id="admin-chat-title">Nội dung chat</div>
+                                <div class="card-body" id="admin-chat-thread" style="max-height:360px;overflow:auto"></div>
+                                <div class="card-footer bg-white d-flex gap-2">
+                                    <input type="text" id="admin-chat-reply" class="form-control" placeholder="Nhập phản hồi cho user...">
+                                    <button type="button" class="btn btn-primary" onclick="sendAdminReply()">Gửi</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>

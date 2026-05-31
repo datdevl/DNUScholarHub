@@ -170,9 +170,13 @@ function validateDocumentForm(formEl) {
         showFieldError("id_mon_hoc", "Vui lòng chọn môn học");
         valid = false;
     }
-    if (!duongDan || !isValidUrl(duongDan.value)) {
-        showFieldError("duong_dan_file", "Link tải phải là URL hợp lệ (http/https)");
-        valid = false;
+    const fileInput = formEl.querySelector("#file_upload");
+    const hasLocalFile = fileInput && fileInput.files && fileInput.files.length > 0;
+    if (!hasLocalFile) {
+        if (!duongDan || !isValidUrl(duongDan.value)) {
+            showFieldError("duong_dan_file", "Nhập link tải hợp lệ hoặc chọn file từ máy");
+            valid = false;
+        }
     }
     if (anhBia && anhBia.value.trim() && !isValidUrl(anhBia.value)) {
         showFieldError("anh_bia", "URL ảnh bìa không hợp lệ");
@@ -218,11 +222,8 @@ function validateSubjectForm(formEl) {
 
 function getApprovedDocuments(docs) {
     return docs.filter(function (d) {
-        const status = d.trang_thai;
-        if (!status || status === SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED) {
-            return true;
-        }
-        return status === SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED;
+        const status = String(d.trang_thai || SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED).toLowerCase();
+        return status === String(SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED).toLowerCase();
     });
 }
 

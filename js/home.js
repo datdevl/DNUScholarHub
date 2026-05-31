@@ -23,6 +23,23 @@ function renderDocList(docs, containerId, subjects) {
     }
 }
 
+function pickUniqueDocs(list, max) {
+    const seenTitles = {};
+    const seenImages = {};
+    const out = [];
+    for (let i = 0; i < list.length; i++) {
+        const d = list[i];
+        const titleKey = String(d.tieu_de || "").toLowerCase().trim();
+        const imgKey = String(d.anh_bia || "").toLowerCase().trim();
+        if (seenTitles[titleKey] || seenImages[imgKey]) continue;
+        seenTitles[titleKey] = true;
+        seenImages[imgKey] = true;
+        out.push(d);
+        if (out.length >= max) break;
+    }
+    return out;
+}
+
 function loadFeaturedDocuments() {
     showLoading("featured-loader", 4);
 
@@ -34,12 +51,12 @@ function loadFeaturedDocuments() {
                 approved.sort(function (a, b) {
                     return (Number(b.so_luot_xem) || 0) - (Number(a.so_luot_xem) || 0);
                 });
-                renderDocList(approved.slice(0, 8), "featured-grid", subs);
+                renderDocList(pickUniqueDocs(approved, 8), "featured-grid", subs);
 
                 const premium = approved.filter(function (d) {
                     return getDocPrice(d) > 0;
                 });
-                renderDocList(premium.slice(0, 4), "premium-grid", subs);
+                renderDocList(pickUniqueDocs(premium, 4), "premium-grid", subs);
             });
         })
         .catch(function () {

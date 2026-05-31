@@ -160,7 +160,8 @@ function loadDocumentsPage() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    initLayout("documents");
+    const pageKey = getQueryParam("filter") === "premium" ? "premium" : "documents";
+    initLayout(pageKey);
     loadDocumentsPage();
 
     const searchInput = document.getElementById("search-docs");

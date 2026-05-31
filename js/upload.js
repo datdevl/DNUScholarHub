@@ -28,12 +28,14 @@ function handleUploadSubmit(e) {
         return;
     }
 
+    const selectedFile = form.file_upload && form.file_upload.files ? form.file_upload.files[0] : null;
+    const defaultLink = form.duong_dan_file.value.trim();
     const payload = {
         tieu_de: form.tieu_de.value.trim(),
         id_mon_hoc: Number(form.id_mon_hoc.value),
         loai_tai_lieu: form.loai_tai_lieu.value,
         nguoi_dang: form.nguoi_dang.value.trim(),
-        duong_dan_file: form.duong_dan_file.value.trim(),
+        duong_dan_file: defaultLink,
         anh_bia: form.anh_bia.value.trim() || "https://picsum.photos/400/240",
         mo_ta: (form.mo_ta && form.mo_ta.value.trim()) || "",
         tu_khoa: (form.tu_khoa && form.tu_khoa.value.trim()) || "",
@@ -51,10 +53,19 @@ function handleUploadSubmit(e) {
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
     }
 
-    api.createDocument(payload)
+    resolveUploadLink(payload, selectedFile)
+        .then(function (readyPayload) {
+            const localPayload = { ...readyPayload, id: "local-doc-" + Date.now() };
+            upsertLocalDocument(localPayload);
+            return api.createDocument(readyPayload).catch(function () {
+                return localPayload;
+            });
+        })
         .then(function () {
             showToast("Đã gửi tài liệu! Chờ admin duyệt (Pending).", "success");
             form.reset();
+            const fileNameEl = document.getElementById("file-upload-name");
+            if (fileNameEl) fileNameEl.textContent = "";
             clearFieldErrors(form);
             rewardUploadXu();
         })
@@ -67,6 +78,24 @@ function handleUploadSubmit(e) {
                 btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up me-2"></i>Gửi tài liệu';
             }
         });
+}
+
+function resolveUploadLink(payload, file) {
+    if (!file) return Promise.resolve(payload);
+    return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            resolve({
+                ...payload,
+                duong_dan_file: String(ev.target.result || ""),
+                ten_file_goc: file.name
+            });
+        };
+        reader.onerror = function () {
+            reject(new Error("read_file_failed"));
+        };
+        reader.readAsDataURL(file);
+    });
 }
 
 function rewardUploadXu() {
@@ -99,4 +128,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (nguoiDang && user && user.ho_ten) nguoiDang.value = user.ho_ten;
     const form = document.getElementById("upload-form");
     if (form) form.addEventListener("submit", handleUploadSubmit);
+    const fileInput = document.getElementById("file_upload");
+    const fileNameEl = document.getElementById("file-upload-name");
+    if (fileInput && fileNameEl) {
+        fileInput.addEventListener("change", function () {
+            const f = fileInput.files && fileInput.files[0];
+            fileNameEl.textContent = f ? "Đã chọn: " + f.name : "";
+        });
+    }
 });
