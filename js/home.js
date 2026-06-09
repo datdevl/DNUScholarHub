@@ -6,7 +6,7 @@ let homeSubjects = [];
 window.handleHeroSearch = function () {
     const input = document.getElementById("hero-search");
     const q = input ? input.value.trim() : "";
-    window.location.href = q ? "documents.html?q=" + encodeURIComponent(q) : "documents.html";
+    window.location.href = q ? "html/documents.html?q=" + encodeURIComponent(q) : "html/documents.html";
 };
 
 function renderDocList(docs, containerId, subjects) {
@@ -85,7 +85,7 @@ function loadPopularSubjects() {
                         <h5 class="card-title fs-6 fw-bold">${escapeHtml(s.ten_mon_hoc)}</h5>
                         <p class="text-muted small mb-2">${escapeHtml(s.khoa_vien || "")}</p>
                         <p class="small mb-0 text-primary fw-semibold">${s.so_tin_chi || 0} tín chỉ</p>
-                        <a href="documents.html?mon=${s.id}" class="stretched-link"></a>
+                        <a href="html/documents.html?mon=${s.id}" class="stretched-link"></a>
                     </div>
                 </div>
             </div>`;

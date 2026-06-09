@@ -6,7 +6,7 @@ let profileUser = null;
 function loadProfile() {
     const user = getCurrentUser();
     if (!user || !user.id) {
-        window.location.href = "login.html";
+        window.location.href = window.SH_HTML + "login.html";
         return;
     }
 
@@ -75,6 +75,40 @@ function renderAvatarSection(currentUrl) {
                 s.classList.toggle("selected", s === img);
             });
         });
+    });
+}
+
+function resizeAvatarFile(file) {
+    return new Promise(function (resolve, reject) {
+        if (!file || !file.type || file.type.indexOf("image/") !== 0) {
+            reject(new Error("invalid_image"));
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const img = new Image();
+            img.onload = function () {
+                const maxSize = 320;
+                const ratio = Math.min(1, maxSize / Math.max(img.width, img.height));
+                const width = Math.max(1, Math.round(img.width * ratio));
+                const height = Math.max(1, Math.round(img.height * ratio));
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL("image/jpeg", 0.75));
+            };
+            img.onerror = function () {
+                reject(new Error("load_image_failed"));
+            };
+            img.src = ev.target.result;
+        };
+        reader.onerror = function () {
+            reject(new Error("read_image_failed"));
+        };
+        reader.readAsDataURL(file);
     });
 }
 
@@ -162,11 +196,21 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.addEventListener("change", function () {
             const file = fileInput.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (ev) {
-                document.getElementById("profile-avatar-main").src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
+            resizeAvatarFile(file)
+                .then(function (avatarDataUrl) {
+                    const main = document.getElementById("profile-avatar-main");
+                    if (main) main.src = avatarDataUrl;
+                    document.querySelectorAll(".avatar-sample.selected").forEach(function (img) {
+                        img.classList.remove("selected");
+                    });
+                    showToast("Đã chọn ảnh đại diện, bấm Lưu thay đổi để cập nhật", "success");
+                })
+                .catch(function () {
+                    showToast("Không đọc được ảnh đại diện", "error");
+                })
+                .finally(function () {
+                    fileInput.value = "";
+                });
         });
     }
 

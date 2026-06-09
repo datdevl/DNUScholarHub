@@ -15,7 +15,8 @@ function switchAdminTab(tab) {
         chats: document.getElementById("panel-chats"),
         stats: document.getElementById("panel-stats"),
         pending: document.getElementById("panel-pending"),
-        reports: document.getElementById("panel-reports")
+        reports: document.getElementById("panel-reports"),
+        attendance: document.getElementById("panel-attendance")
     };
     const keys = Object.keys(panels);
     for (let i = 0; i < keys.length; i++) {
@@ -36,6 +37,7 @@ function loadAdminPanel() {
     else if (adminTab === "chats") loadAdminChats();
     else if (adminTab === "reports") loadAdminReports();
     else if (adminTab === "stats") loadAdminStats();
+    else if (adminTab === "attendance" && typeof startAttendanceAdmin === "function") startAttendanceAdmin();
 }
 
 function loadAdminStats() {
@@ -188,13 +190,19 @@ function loadAdminUsers() {
             for (let i = 0; i < users.length; i++) {
                 const u = users[i];
                 const av = u.anh_dai_dien || SCHOLARHUB_CONFIG.DEFAULT_AVATARS[0];
+                const lastAccess = u.last_access ? new Date(u.last_access).toLocaleString('vi-VN') : "Chưa có";
                 html += `<tr>
                     <td><img src="${av}" width="36" height="36" class="rounded-circle" alt=""></td>
                     <td>${escapeHtml(u.ho_ten || "")}</td>
                     <td>${escapeHtml(u.email || "")}</td>
                     <td><input type="number" class="form-control form-control-sm" style="width:80px" id="xu-${u.id}" value="${u.so_xu || 0}"></td>
                     <td>${u.diem_tich_luy || 0}</td>
-                    <td><button class="btn btn-sm btn-primary" onclick="saveUserXu('${u.id}')">Lưu xu</button></td>
+                    <td>${escapeHtml(lastAccess)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1" onclick="saveUserXu('${u.id}')" title="Lưu Xu"><i class="fa-solid fa-save"></i></button>
+                        <button class="btn btn-sm btn-warning me-1" onclick="changeUserPassword('${u.id}')" title="Đổi MK"><i class="fa-solid fa-key"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteUserAccount('${u.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>`;
             }
             tbody.innerHTML = html;
@@ -219,7 +227,42 @@ function saveUserXu(id) {
     });
 }
 
+function changeUserPassword(id) {
+    const newPass = prompt("Nhập mật khẩu mới cho người dùng:");
+    if (!newPass) return;
+
+    
+    const locals = getLocalUsers();
+    const localUser = locals.find(function(u) { return String(u.id) === String(id); });
+    const payload = localUser ? { ...localUser, mat_khau: newPass } : { mat_khau: newPass };
+    
+    updateUserData(id, payload).then(function () {
+        showToast("Đổi mật khẩu thành công", "success");
+        loadAdminUsers();
+    }).catch(function () {
+        showToast("Đổi mật khẩu thất bại", "error");
+    });
+}
+
+function deleteUserAccount(id) {
+    if (!confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
+
+    api.deleteUser(id)
+        .then(function () {
+            deleteLocalUserById(id);
+            showToast("Đã xóa người dùng", "success");
+            loadAdminUsers();
+        })
+        .catch(function () {
+            deleteLocalUserById(id);
+            showToast("Đã xóa người dùng local", "success");
+            loadAdminUsers();
+        });
+}
+
 window.saveUserXu = saveUserXu;
+window.changeUserPassword = changeUserPassword;
+window.deleteUserAccount = deleteUserAccount;
 
 function loadAdminSubjects() {
     const tbody = document.getElementById("admin-subjects-body");
@@ -616,7 +659,11 @@ function sendAdminReply() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    loadAdminPanel();
+    if (location.hash === "#attendance") {
+        switchAdminTab("attendance");
+    } else {
+        loadAdminPanel();
+    }
     document.querySelectorAll("[data-admin-tab]").forEach(function (btn) {
         btn.addEventListener("click", function () {
             switchAdminTab(btn.getAttribute("data-admin-tab"));

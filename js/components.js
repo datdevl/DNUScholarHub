@@ -88,7 +88,7 @@ function openDocDetail(id) {
                 actionHtml = `<a href="${escapeHtml(doc.duong_dan_file)}" target="_blank" rel="noopener" class="btn btn-primary flex-grow-1" id="btn-download-doc">
                     <i class="fa-solid fa-download me-2"></i>Tải tài liệu</a>`;
             } else if (!isLoggedIn()) {
-                actionHtml = `<a href="login.html" class="btn btn-accent flex-grow-1"><i class="fa-solid fa-user me-2"></i>Đăng nhập để mua (${price} Xu)</a>`;
+                actionHtml = `<a href="${window.SH_HTML}login.html" class="btn btn-accent flex-grow-1"><i class="fa-solid fa-user me-2"></i>Đăng nhập để mua (${price} Xu)</a>`;
             } else {
                 actionHtml = `<button type="button" class="btn btn-accent flex-grow-1" id="btn-buy-doc">
                     <i class="fa-solid fa-coins me-2"></i>Mua ngay ${price} Xu</button>
@@ -173,7 +173,20 @@ function openDocDetail(id) {
                     const score = Number(btn.getAttribute("data-score")) || 0;
                     setUserDocRating(doc.id, score, doc.tieu_de || "");
                     showToast("Đã lưu đánh giá " + score + " sao", "success");
-                    openDocDetail(id);
+                    // Update star UI immediately without reloading modal
+                    document.querySelectorAll("#doc-rating-actions .rate-star").forEach(function (starBtn) {
+                        var starScore = Number(starBtn.getAttribute("data-score")) || 0;
+                        var icon = starBtn.querySelector("i");
+                        if (icon) {
+                            if (starScore <= score) {
+                                icon.classList.remove("text-secondary");
+                                icon.classList.add("text-warning");
+                            } else {
+                                icon.classList.remove("text-warning");
+                                icon.classList.add("text-secondary");
+                            }
+                        }
+                    });
                 });
             });
         })
@@ -183,11 +196,13 @@ function openDocDetail(id) {
 }
 
 function getDocumentByIdSmart(id) {
-    return api.getDocumentById(id).catch(function () {
+    return api.getDocumentById(id).then(function (doc) {
+        return normalizeDocument(doc);
+    }).catch(function () {
         const local = (typeof getLocalDocuments === "function" ? getLocalDocuments() : []).find(function (d) {
             return String(d.id) === String(id);
         });
-        if (local) return local;
+        if (local) return normalizeDocument(local);
         return Promise.reject(new Error("not_found"));
     });
 }

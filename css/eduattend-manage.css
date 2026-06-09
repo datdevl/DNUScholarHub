@@ -1,0 +1,323 @@
+/* EduAttend manage — ScholarHub (scoped) */
+.eduattend-manage-page {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f9f8f5;
+  --border: #e8e6e0;
+  --text: #1a1a18;
+  --muted: #8a8880;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --success: #16a34a;
+  --success-light: #f0fdf4;
+  --radius: 16px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 0 32px;
+  font-family: "DM Sans", sans-serif;
+  color: var(--text);
+}
+
+.eduattend-manage-page .page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.eduattend-manage-page .page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.eduattend-manage-page .page-header p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.eduattend-manage-page .stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.eduattend-manage-page .stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.eduattend-manage-page .stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.eduattend-manage-page .stat-val {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: "Space Mono", monospace;
+}
+
+.eduattend-manage-page .stat-val.blue { color: var(--accent); }
+.eduattend-manage-page .stat-val.green { color: var(--success); }
+.eduattend-manage-page .stat-val.red { color: var(--danger); }
+
+.eduattend-manage-page .toolbar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+
+.eduattend-manage-page .search-input,
+.eduattend-manage-page .filter-sel {
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.eduattend-manage-page .search-input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.eduattend-manage-page .count-lbl {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 8px 14px;
+  background: var(--surface2);
+  border-radius: 8px;
+}
+
+.eduattend-manage-page .refresh-btn {
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+}
+
+.eduattend-manage-page .date-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: -4px 0 14px;
+}
+
+.eduattend-manage-page .date-tab {
+  padding: 8px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.eduattend-manage-page .date-tab.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.eduattend-manage-page .chart-wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.eduattend-manage-page .chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.eduattend-manage-page .donut-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.eduattend-manage-page .donut {
+  --p: 0;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(#16a34a calc(var(--p) * 1%), #f97316 0);
+  position: relative;
+}
+
+.eduattend-manage-page .donut::after {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  background: var(--surface);
+  border-radius: 50%;
+}
+
+.eduattend-manage-page .donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Space Mono", monospace;
+  font-size: 18px;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.eduattend-manage-page .table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.eduattend-manage-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.eduattend-manage-page thead {
+  background: var(--surface2);
+}
+
+.eduattend-manage-page th,
+.eduattend-manage-page td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  text-align: left;
+}
+
+.eduattend-manage-page th {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.eduattend-manage-page .face-thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.eduattend-manage-page .badge.ok {
+  background: var(--success-light);
+  color: var(--success);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 700;
+}
+
+.eduattend-manage-page .badge.late {
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-weight: 700;
+}
+
+.eduattend-manage-page .btn-sm {
+  padding: 6px 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid;
+  font-family: "DM Sans", sans-serif;
+}
+
+.eduattend-manage-page .btn-ok {
+  border-color: #86efac;
+  color: var(--success);
+  background: var(--success-light);
+}
+
+.eduattend-manage-page .btn-no {
+  border-color: #fca5a5;
+  color: var(--danger);
+  background: var(--danger-light);
+}
+
+#imgModal.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+#imgModal.modal.open {
+  display: flex;
+}
+
+#imgModal .modal-img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 18px;
+}
+
+#imgModal .modal-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: #fff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .eduattend-manage-page .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .eduattend-manage-page th:nth-child(3),
+  .eduattend-manage-page td:nth-child(3) {
+    display: none;
+  }
+}

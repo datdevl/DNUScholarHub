@@ -3,12 +3,13 @@
  */
 
 const NAV_TOP = [
-    { id: "home", href: "index.html", icon: "fa-house", label: "Trang chủ" },
-    { id: "documents", href: "documents.html", icon: "fa-file-lines", label: "Tài liệu" },
-    { id: "subjects", href: "subjects.html", icon: "fa-book", label: "Môn học" },
-    { id: "premium", href: "documents.html?filter=premium", icon: "fa-crown", label: "Tài liệu VIP" },
-    { id: "upload", href: "upload.html", icon: "fa-cloud-arrow-up", label: "Đăng tải" },
-    { id: "favorites", href: "favorites.html", icon: "fa-bookmark", label: "Yêu thích" }
+    { id: "home", href: window.SH_ROOT + "index.html", icon: "fa-house", label: "Trang chủ" },
+    { id: "documents", href: window.SH_HTML + "documents.html", icon: "fa-file-lines", label: "Tài liệu" },
+    { id: "subjects", href: window.SH_HTML + "subjects.html", icon: "fa-book", label: "Môn học" },
+    { id: "premium", href: window.SH_HTML + "documents.html?filter=premium", icon: "fa-crown", label: "Tài liệu VIP" },
+    { id: "upload", href: window.SH_HTML + "upload.html", icon: "fa-cloud-arrow-up", label: "Đăng tải" },
+    { id: "favorites", href: window.SH_HTML + "favorites.html", icon: "fa-bookmark", label: "Yêu thích" },
+    { id: "attendance", href: window.SH_HTML + "attendance.html", icon: "fa-fingerprint", label: "Điểm danh" }
 ];
 
 /**
@@ -18,24 +19,25 @@ const NAV_TOP = [
  */
 function renderBrandLink(href, variant) {
     const v = variant || "header";
-    const logo = (typeof SCHOLARHUB_CONFIG !== "undefined" && SCHOLARHUB_CONFIG.LOGO) || "logo.png";
+    const logo = (typeof SCHOLARHUB_CONFIG !== "undefined" && SCHOLARHUB_CONFIG.LOGO) || (window.SH_ROOT + "logo.png");
     const alt = (typeof SCHOLARHUB_CONFIG !== "undefined" && SCHOLARHUB_CONFIG.SITE_NAME) || "ScholarHub";
-    const home = href || "index.html";
+    const home = href || window.SH_ROOT + "index.html";
     return `<a href="${home}" class="site-brand site-brand--${v}" aria-label="${alt}">
         <img src="${logo}" alt="${alt}" class="site-brand__img" width="180" height="48">
     </a>`;
 }
 
 const NAV_SIDEBAR = [
-    { id: "documents", href: "documents.html", icon: "fa-file-lines", label: "Kho tài liệu" },
-    { id: "subjects", href: "subjects.html", icon: "fa-book", label: "Môn học" },
-    { id: "premium", href: "documents.html?filter=premium", icon: "fa-crown", label: "Tài liệu trả phí" },
-    { id: "upload", href: "upload.html", icon: "fa-upload", label: "Đóng góp TL" },
-    { id: "favorites", href: "favorites.html", icon: "fa-heart", label: "Yêu thích" },
-    { id: "profile", href: "profile.html", icon: "fa-user", label: "Hồ sơ cá nhân" },
+    { id: "documents", href: window.SH_HTML + "documents.html", icon: "fa-file-lines", label: "Kho tài liệu" },
+    { id: "subjects", href: window.SH_HTML + "subjects.html", icon: "fa-book", label: "Môn học" },
+    { id: "premium", href: window.SH_HTML + "documents.html?filter=premium", icon: "fa-crown", label: "Tài liệu trả phí" },
+    { id: "upload", href: window.SH_HTML + "upload.html", icon: "fa-upload", label: "Đóng góp TL" },
+    { id: "favorites", href: window.SH_HTML + "favorites.html", icon: "fa-heart", label: "Yêu thích" },
+    { id: "profile", href: window.SH_HTML + "profile.html", icon: "fa-user", label: "Hồ sơ cá nhân" },
     { divider: true },
-    { id: "leaderboard", href: "leaderboard.html", icon: "fa-trophy", label: "Bảng xếp hạng" },
-    { id: "wallet", href: "profile.html#nap-xu", icon: "fa-coins", label: "Nạp xu" }
+    { id: "leaderboard", href: window.SH_HTML + "leaderboard.html", icon: "fa-trophy", label: "Bảng xếp hạng" },
+    { id: "attendance", href: window.SH_HTML + "attendance.html", icon: "fa-fingerprint", label: "Điểm danh Face ID" },
+    { id: "wallet", href: window.SH_HTML + "profile.html#nap-xu", icon: "fa-coins", label: "Nạp xu" }
 ];
 
 function renderHeader(activePage) {
@@ -46,26 +48,40 @@ function renderHeader(activePage) {
     for (let i = 0; i < NAV_TOP.length; i++) {
         const n = NAV_TOP[i];
         const active = n.id === activePage ? " active" : "";
-        topLinks += `<li class="nav-item"><a class="nav-link nav-top-link${active}" href="${n.href}"><i class="fa-solid ${n.icon}"></i>${n.label}</a></li>`;
+        const label = typeof t === "function" ? t(`nav_${n.id}`) : n.label;
+        topLinks += `<li class="nav-item"><a class="nav-link nav-top-link${active}" href="${n.href}"><i class="fa-solid ${n.icon}"></i>${label}</a></li>`;
     }
 
     const userBlock = logged
         ? `<span class="coin-badge-header d-none d-md-inline-flex" id="header-xu-badge"><i class="fa-solid fa-coins"></i><span id="header-xu-val">${user.so_xu || 0}</span> Xu</span>
-           <a href="favorites.html" class="header-icon-btn" title="Yêu thích"><i class="fa-solid fa-bookmark"></i></a>
-           <a href="profile.html" title="Hồ sơ"><img src="${user.anh_dai_dien || SCHOLARHUB_CONFIG.DEFAULT_AVATARS[0]}" class="user-avatar-sm" id="header-avatar" alt=""></a>`
-        : `<a href="login.html" class="btn btn-primary btn-sm rounded-pill px-3">Đăng nhập</a>
-           <a href="register.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 ms-1">Đăng ký</a>`;
+           <a href="${window.SH_HTML}favorites.html" class="header-icon-btn" title="Yêu thích"><i class="fa-solid fa-bookmark"></i></a>
+           <a href="${window.SH_HTML}profile.html" title="Hồ sơ"><img src="${user.anh_dai_dien || SCHOLARHUB_CONFIG.DEFAULT_AVATARS[0]}" class="user-avatar-sm" id="header-avatar" alt=""></a>`
+        : `<a href="${window.SH_HTML}login.html" class="btn btn-primary btn-sm rounded-pill px-3">${typeof t === "function" ? t("btn_login") : "Đăng nhập"}</a>
+           <a href="${window.SH_HTML}register.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 ms-1">${typeof t === "function" ? t("btn_register") : "Đăng ký"}</a>`;
+
+    const currentLang = typeof getCurrentLang === "function" ? getCurrentLang() : "vi";
+    const nextLang = currentLang === "vi" ? "en" : "vi";
+    // Using explicit image tags for flags to ensure cross-platform compatibility instead of emojis
+    const flagIcon = currentLang === "vi" ?
+        '<img src="https://flagcdn.com/w40/vn.png" alt="VN" style="width:24px;height:18px;object-fit:cover;border-radius:2px">' :
+        '<img src="https://flagcdn.com/w40/gb.png" alt="EN" style="width:24px;height:18px;object-fit:cover;border-radius:2px">';
+
+    const isDark = typeof getCurrentTheme === "function" ? getCurrentTheme() === "dark" : false;
+    const themeIcon = isDark ? "fa-sun" : "fa-moon";
 
     return `
     <header class="app-header">
         <nav class="navbar navbar-expand-lg py-2">
             <div class="container-fluid px-3 px-lg-4">
-                ${renderBrandLink("index.html", "header")}
+                ${renderBrandLink(window.SH_ROOT + "index.html", "header")}
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="topNav">
                     <ul class="navbar-nav mx-auto">${topLinks}</ul>
-                    <div class="d-flex align-items-center gap-2">${userBlock}
-                        <a href="admin.html" class="header-icon-btn d-none d-md-inline-flex" title="Admin"><i class="fa-solid fa-gear"></i></a>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="header-icon-btn border-0 bg-transparent" onclick="typeof toggleTheme === 'function' ? toggleTheme() : null" title="Toggle Theme"><i id="theme-icon" class="fa-solid ${themeIcon}"></i></button>
+                        <button class="header-icon-btn border-0 bg-transparent fs-5" onclick="typeof setLanguage === 'function' ? setLanguage('${nextLang}') : null" title="Language: ${currentLang.toUpperCase()}">${flagIcon}</button>
+                        ${userBlock}
+                        <a href="${window.SH_HTML}admin.html" class="header-icon-btn d-none d-md-inline-flex" title="Admin"><i class="fa-solid fa-gear"></i></a>
                     </div>
                 </div>
             </div>
@@ -82,7 +98,9 @@ function renderSidebar(activePage) {
             continue;
         }
         const active = item.id === activePage ? " active" : "";
-        html += `<a href="${item.href}" class="sidebar-link${active}" data-nav="${item.id}"><i class="fa-solid ${item.icon}"></i>${item.label}</a>`;
+        const labelKey = item.id === "premium" ? "sidebar_premium" : `sidebar_${item.id}`;
+        const label = typeof t === "function" ? t(labelKey) : item.label;
+        html += `<a href="${item.href}" class="sidebar-link${active}" data-nav="${item.id}"><i class="fa-solid ${item.icon}"></i>${label}</a>`;
     }
     html += `<div class="sidebar-social">
         <a href="https://www.facebook.com/datdevl" target="_blank" rel="noopener" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
@@ -96,33 +114,34 @@ function renderRightbar() {
     return `
     <aside class="app-rightbar-inner">
         <div class="countdown-box">
-            <div class="widget-title text-white mb-2" style="font-size:.85rem" id="exam-title">Đếm ngược kỳ thi</div>
+            <div class="widget-title text-white mb-2" style="font-size:.85rem" id="exam-title">${typeof t === "function" ? t("rightbar_exam") : "Đếm ngược kỳ thi"}</div>
             <div class="countdown-grid" id="exam-countdown">
-                <div class="countdown-item"><span class="num" id="cd-days">0</span><span class="lbl">Ngày</span></div>
-                <div class="countdown-item"><span class="num" id="cd-hours">00</span><span class="lbl">Giờ</span></div>
-                <div class="countdown-item"><span class="num" id="cd-mins">00</span><span class="lbl">Phút</span></div>
-                <div class="countdown-item"><span class="num" id="cd-secs">00</span><span class="lbl">Giây</span></div>
+                <div class="countdown-item"><span class="num" id="cd-days">0</span><span class="lbl">${typeof t === "function" ? t("rightbar_days") : "Ngày"}</span></div>
+                <div class="countdown-item"><span class="num" id="cd-hours">00</span><span class="lbl">${typeof t === "function" ? t("rightbar_hours") : "Giờ"}</span></div>
+                <div class="countdown-item"><span class="num" id="cd-mins">00</span><span class="lbl">${typeof t === "function" ? t("rightbar_mins") : "Phút"}</span></div>
+                <div class="countdown-item"><span class="num" id="cd-secs">00</span><span class="lbl">${typeof t === "function" ? t("rightbar_secs") : "Giây"}</span></div>
             </div>
         </div>
         <div class="widget-box">
-            <div class="widget-title"><i class="fa-solid fa-trophy text-warning me-1"></i> Bảng xếp hạng</div>
+            <div class="widget-title"><i class="fa-solid fa-trophy text-warning me-1"></i> ${typeof t === "function" ? t("sidebar_leaderboard") : "Bảng xếp hạng"}</div>
             <ul class="nav nav-pills nav-fill mb-2" id="lb-tabs">
-                <li class="nav-item"><button class="nav-link active py-1 small" data-lb="week">Tuần</button></li>
-                <li class="nav-item"><button class="nav-link py-1 small" data-lb="month">Tháng</button></li>
+                <li class="nav-item"><button class="nav-link active py-1 small" data-lb="week">${typeof t === "function" ? t("lb_week") : "Tuần"}</button></li>
+                <li class="nav-item"><button class="nav-link py-1 small" data-lb="month">${typeof t === "function" ? t("lb_month") : "Tháng"}</button></li>
             </ul>
             <div id="leaderboard-list"><div class="text-center py-3"><div class="spinner-border spinner-border-sm text-primary"></div></div></div>
         </div>
         <div class="widget-consult">
-            <div class="fw-bold mb-2">Nhận tư vấn miễn phí</div>
-            <input type="text" class="form-control form-control-sm" id="consult-name" placeholder="Họ tên">
-            <input type="tel" class="form-control form-control-sm" id="consult-phone" placeholder="Số điện thoại">
-            <button type="button" class="btn btn-light btn-sm mt-1" id="btn-consult">Gửi yêu cầu</button>
+            <div class="fw-bold mb-2">${typeof t === "function" ? t("rightbar_consult") : "Nhận tư vấn miễn phí"}</div>
+            <input type="text" class="form-control form-control-sm" id="consult-name" placeholder="${typeof t === "function" ? t("rightbar_name") : "Họ tên"}">
+            <input type="email" class="form-control form-control-sm" id="consult-email" placeholder="Email">
+            <input type="tel" class="form-control form-control-sm" id="consult-phone" placeholder="${typeof t === "function" ? t("rightbar_phone") : "Số điện thoại"}">
+            <button type="button" class="btn btn-light btn-sm mt-1" id="btn-consult">${typeof t === "function" ? t("rightbar_send") : "Gửi yêu cầu"}</button>
         </div>
         <div class="lecturer-rail">
             <div class="lecturer-track" id="lecturer-track">
-                ${renderLecturerCard("https://images.unsplash.com/photo-1544717305-2782549b5136?w=300&h=300&fit=crop","TS. Nguyễn Minh Đức","Giảng viên Khoa CNTT","Chuyên ngành: Khoa học dữ liệu")}
-                ${renderLecturerCard("https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=300&h=300&fit=crop","ThS. Lê Thu Hà","Giảng viên Bộ môn CSDL","Chuyên ngành: Cơ sở dữ liệu")}
-                ${renderLecturerCard("https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop","TS. Trần Minh Quân","Giảng viên Khoa CNTT","Chuyên ngành: AI ứng dụng")}
+                ${renderLecturerCard("https://scontent.fhan15-1.fna.fbcdn.net/v/t39.30808-6/544828771_24235895536096060_1163072788702630779_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeHgh7CktVJgcBbBsIPm0zRpksMOWwQeP3qSww5bBB4_egaN8OiFtgLA2QMRVHmbEqtYoaSfNT8_rX0PSj9wzgHF&_nc_ohc=X9iEIAoAl_0Q7kNvwFRJivs&_nc_oc=Ado_sXwcZ5ZN1kQCm1GdNs2tqdf61VuGwX7HEelwXSNN6fNOm-IZYNH0YqYPadCDrkMrZZqzkIdj--9B0g7RRZne&_nc_zt=23&_nc_ht=scontent.fhan15-1.fna&_nc_gid=n--Ns5MXyaB7cTlt3ETUWA&_nc_ss=7b2a8&oh=00_Af_6ZQ8zYp0wDIJWsW0YeHVglcNDiNN6G0LGww1WAkvEkw&oe=6A21F60B","Thầy Lê Văn Phong","Giảng viên Khoa CNTT","Chuyên ngành: Khoa học dữ liệu")}
+                ${renderLecturerCard("https://scontent.fhan15-1.fna.fbcdn.net/v/t39.30808-1/616166985_2632255180473473_947613393094388330_n.jpg?stp=c0.18.1365.1365a_dst-jpg_s100x100_tt6&_nc_cat=105&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeE0FrMJDEufitx8sn-a6Aqbho0IVnihgKKGjQhWeKGAoiBtTXkJrMAzYTLVIwdBhVjW_StgL0IlAfTHDFMThsUQ&_nc_ohc=weISBRKzV_YQ7kNvwH3hRO_&_nc_oc=AdrOAWX8XSUOEBw_YqcSUgZRuWj8kfy23Bqkrq1eyddoBcq7TUCB8XLVtbaO69DRXq3nG608d4MqyA1aamoIYlaQ&_nc_zt=24&_nc_ht=scontent.fhan15-1.fna&_nc_gid=DVf0dsXvGb9gJv13S8NYgA&_nc_ss=7b2a8&oh=00_Af_8HFORG9w3o7bB1-ioNyiUYb8A7wo8rEE6twfehFepyA&oe=6A21F599","Thầy Nguyễn Thế Huy Hoàng","Giảng viên Bộ môn CSDL","Chuyên ngành: Cơ sở dữ liệu")}
+                ${renderLecturerCard("https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-1/658147276_2730602617322797_4675060846371236992_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFty7T3A2M0V8F8LirxkrQK4whgIR8Q377jCGAhHxDfvnR5eLMbPjIFhgpp7XAcLXgcJ2zE4enPTgywMfj2DYGl&_nc_ohc=DIeKzrLQ1j0Q7kNvwGTg_QM&_nc_oc=AdrM06Xc3HT3jV3b3SbrbZu0ZVDO-495un3YPURl-zOIOO1BXVizOVFjH2TL2Th2JqA0M_Ao_9GwSZsV_jCs5bIS&_nc_zt=24&_nc_ht=scontent.fhan15-2.fna&_nc_gid=UwUzjNrZOFy4q1BGL0mOGg&_nc_ss=7b2a8&oh=00_Af84RfieMACT46EDMjLGDIurQJTk4sljGH0DJ1GOZUrLHw&oe=6A21F28A","Thầy Trần Hải Anh","Giảng viên Bộ môn KT&HDHMT","Chuyên ngành: AI ứng dụng")}
             </div>
         </div>
     </aside>`;
@@ -152,18 +171,20 @@ function renderFooter() {
                 </div>
                 <div class="col-md-3">
                     <h6>THÔNG TIN</h6>
-                    <a href="about.html">Giới thiệu</a>
-                    <a href="documents.html">Kho tài liệu</a>
-                    <a href="upload.html">Đăng tải</a>
+                    <a href="${window.SH_HTML}about.html">Giới thiệu</a>
+                    <a href="${window.SH_HTML}documents.html">Kho tài liệu</a>
+                    <a href="${window.SH_HTML}upload.html">Đăng tải</a>
+                    <a href="${window.SH_HTML}attendance.html">Điểm danh Face ID</a>
+                    <a href="${window.SH_HTML}admin.html#attendance">Quản lý điểm danh (Admin)</a>
                 </div>
                 <div class="col-md-3">
                     <h6>TÀI KHOẢN</h6>
-                    <a href="login.html">Đăng nhập</a>
-                    <a href="register.html">Đăng ký</a>
-                    <a href="profile.html">Hồ sơ &amp; Xu</a>
+                    <a href="${window.SH_HTML}login.html">Đăng nhập</a>
+                    <a href="${window.SH_HTML}register.html">Đăng ký</a>
+                    <a href="${window.SH_HTML}profile.html">Hồ sơ &amp; Xu</a>
                 </div>
                 <div class="col-md-3">
-                    ${renderBrandLink("index.html", "footer")}
+                    ${renderBrandLink(window.SH_ROOT + "index.html", "footer")}
                     <p class="small opacity-75 mt-2">Nền tảng chia sẻ tài liệu học tập trực tuyến cho sinh viên Đại Nam.</p>
                 </div>
             </div>
@@ -395,11 +416,20 @@ function bindConsultForm() {
     if (!btn) return;
     btn.addEventListener("click", function () {
         const name = (document.getElementById("consult-name") || {}).value || "";
+        const email = (document.getElementById("consult-email") || {}).value || "";
         const phone = (document.getElementById("consult-phone") || {}).value || "";
-        if (!name.trim() || !phone.trim()) {
-            showToast("Vui lòng nhập họ tên và SĐT", "error");
+        if (!name.trim() || !phone.trim() || !email.trim()) {
+            showToast("Vui lòng nhập họ tên, email và SĐT", "error");
             return;
         }
+
+        // Basic email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.trim())) {
+            showToast("Email không hợp lệ", "error");
+            return;
+        }
+
         showToast("Đã gửi yêu cầu tư vấn!", "success");
     });
 }
@@ -422,7 +452,7 @@ function publishUserActivity(action, target) {
     const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
     if (!user || !user.id) return;
     const feed = getActivityFeed();
-    feed.push({
+    const newItem = {
         id: "act-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
         user_id: String(user.id),
         user_name: user.ho_ten || user.ten_dang_nhap || user.email || "Người dùng",
@@ -430,9 +460,15 @@ function publishUserActivity(action, target) {
         action: action,
         target: target || "",
         created_at: new Date().toISOString()
-    });
+    };
+    feed.push(newItem);
     const clipped = feed.slice(-120);
     saveActivityFeed(clipped);
+
+    if (typeof showActivityToast === "function") {
+        showActivityToast(newItem);
+        sessionStorage.setItem("scholarhub_activity_last_seen", String(new Date(newItem.created_at).getTime()));
+    }
 }
 
 function initActivityTicker() {
@@ -440,7 +476,13 @@ function initActivityTicker() {
     window.__activityTickerBound = true;
 
     if (!sessionStorage.getItem("scholarhub_activity_last_seen")) {
-        sessionStorage.setItem("scholarhub_activity_last_seen", "0");
+        const feed = getActivityFeed();
+        let initialTime = Date.now();
+        if (feed.length > 0) {
+            // Start polling from the last item so we don't replay the entire history
+            initialTime = new Date(feed[feed.length - 1].created_at).getTime() - 1000;
+        }
+        sessionStorage.setItem("scholarhub_activity_last_seen", String(initialTime));
     }
 
     const poll = function () {

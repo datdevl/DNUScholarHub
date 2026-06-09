@@ -12,13 +12,19 @@ function getCurrentUser() {
 }
 
 function setCurrentUser(user) {
+    if (user && user.id) {
+        user.last_access = new Date().toISOString();
+        if (typeof updateUserData === "function") {
+            updateUserData(user.id, { last_access: user.last_access }).catch(function() {});
+        }
+    }
     localStorage.setItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.user, JSON.stringify(user));
     if (typeof updateHeaderUserUI === "function") updateHeaderUserUI();
 }
 
 function logoutUser() {
     localStorage.removeItem(SCHOLARHUB_CONFIG.STORAGE_KEYS.user);
-    window.location.href = "login.html";
+    window.location.href = window.SH_HTML + "login.html";
 }
 
 function isLoggedIn() {

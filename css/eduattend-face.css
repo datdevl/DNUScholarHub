@@ -1,0 +1,335 @@
+/* EduAttend faceID — ScholarHub (scoped) */
+.eduattend-face-page {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f9f8f5;
+  --border: #e8e6e0;
+  --text: #1a1a18;
+  --muted: #8a8880;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --success: #16a34a;
+  --success-light: #f0fdf4;
+  --warning: #d97706;
+  --warning-light: #fffbeb;
+  --radius: 16px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 8px 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: start;
+  font-family: "DM Sans", sans-serif;
+  color: var(--text);
+}
+
+.eduattend-face-page .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: block;
+}
+
+.eduattend-face-page .card-header {
+  padding: 18px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eduattend-face-page .card-header h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.eduattend-face-page .card-body { padding: 24px; }
+
+.eduattend-face-page .video-wrap {
+  position: relative;
+  background: #050810;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+
+.eduattend-face-page #video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scaleX(-1);
+}
+
+.eduattend-face-page #overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+}
+
+.eduattend-face-page .scan-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 54%;
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.eduattend-face-page .scan-frame.active { opacity: 1; }
+
+.eduattend-face-page .sf-corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+.eduattend-face-page .sf-tl { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 5px 0 0 0; }
+.eduattend-face-page .sf-tr { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 5px 0 0; }
+.eduattend-face-page .sf-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 5px 0; }
+.eduattend-face-page .sf-bl { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 5px; }
+
+.eduattend-face-page .sf-line {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: eduScanH 2.5s ease-in-out infinite;
+}
+
+@keyframes eduScanH {
+  0% { top: 0; opacity: 1; }
+  100% { top: 100%; opacity: 0.2; }
+}
+
+.eduattend-face-page .status-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.eduattend-face-page .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.3s;
+}
+
+.eduattend-face-page .dot.live { background: var(--success); animation: pulseDot 1.8s infinite; }
+.eduattend-face-page .dot.scanning { background: var(--warning); animation: pulseDot 0.6s infinite; }
+.eduattend-face-page .dot.granted { background: var(--success); }
+.eduattend-face-page .dot.denied { background: var(--danger); }
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.7); opacity: 0.5; }
+}
+
+.eduattend-face-page .model-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.eduattend-face-page .progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.eduattend-face-page .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #7c3aed);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.5s;
+}
+
+.eduattend-face-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.eduattend-face-page label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.eduattend-face-page input[type="text"] {
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface2);
+  outline: none;
+  width: 100%;
+}
+
+.eduattend-face-page .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 12px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 10px;
+}
+
+.eduattend-face-page .btn-primary {
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.eduattend-face-page .btn-primary:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.eduattend-face-page .btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.eduattend-face-page .chip-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.eduattend-face-page .chip {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+
+.eduattend-face-page .live-status-panel {
+  background: var(--surface2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 14px;
+  margin-top: 16px;
+}
+
+.eduattend-face-page .live-status-panel h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.eduattend-face-page #liveStatus .ls-row {
+  font-size: 13px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.eduattend-face-page #liveStatus .ls-row.ok { color: var(--success); }
+.eduattend-face-page #liveStatus .ls-row.warn { color: var(--warning); }
+.eduattend-face-page #liveStatus .ls-row.muted { color: var(--muted); }
+
+.eduattend-face-page .result-box {
+  display: none;
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 16px;
+  border: 1.5px solid var(--border);
+}
+
+.eduattend-face-page .result-box.success {
+  border-color: #86efac;
+  background: var(--success-light);
+}
+
+.eduattend-face-page .result-box.error {
+  border-color: #fca5a5;
+  background: var(--danger-light);
+}
+
+.eduattend-face-page .result-box.warning {
+  border-color: #fcd34d;
+  background: var(--warning-light);
+}
+
+.eduattend-face-page .how-section { grid-column: 1 / -1; }
+
+.eduattend-face-page .steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.eduattend-face-page .step {
+  text-align: center;
+  padding: 20px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.eduattend-face-page .step-num {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+}
+
+.eduattend-face-page .step p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .eduattend-face-page {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .eduattend-face-page .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

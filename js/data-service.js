@@ -11,13 +11,6 @@ const DATA_KEYS = {
 };
 
 function isJunkDocument(doc) {
-    if (!doc) return true;
-    const title = String(doc.tieu_de || doc.ten_tai_lieu || "").trim();
-    const loai = String(doc.loai_tai_lieu || "").trim();
-    if (!title) return true;
-    if (/^ten_tai_lieu\s*\d*$/i.test(title)) return true;
-    if (/^loai_tai_lieu\s*\d+$/i.test(loai)) return true;
-    if (/^nguoi_dang\s*\d+$/i.test(String(doc.nguoi_dang || ""))) return true;
     return false;
 }
 
@@ -33,7 +26,51 @@ function normalizeLoaiTaiLieu(raw) {
 }
 
 function normalizeDocument(doc) {
-    const title = doc.tieu_de || doc.ten_tai_lieu || "Tài liệu học tập";
+    // Auto-replace MockAPI's fake names like 'ten_tai_lieu 13' with real-sounding titles
+    if (/^(ten_tai_lieu|name)\s*\d+$/i.test(doc.tieu_de || doc.ten_tai_lieu || '')) {
+        const idNum = parseInt(doc.id) || Math.floor(Math.random() * 1000);
+        
+        const itSubjects = [
+            "Cấu trúc dữ liệu và Giải thuật", "Cơ sở dữ liệu", "Lập trình C/C++", "Lập trình Java", 
+            "Mạng máy tính", "Hệ điều hành", "An toàn thông tin", "Phân tích thiết kế hệ thống", 
+            "Công nghệ phần mềm", "Lập trình Web", "Lập trình Di động", "Trí tuệ nhân tạo", 
+            "Học máy (Machine Learning)", "Khai phá dữ liệu", "Xử lý ảnh", "Đồ họa máy tính", 
+            "Kiến trúc máy tính", "Toán rời rạc", "Xác suất thống kê", "Giải tích 1", 
+            "Giải tích 2", "Đại số tuyến tính", "Nhập môn Khoa học máy tính", "Kỹ thuật lập trình", 
+            "Điện toán đám mây", "Internet of Things (IoT)", "Công nghệ Blockchain", "Big Data", 
+            "Mật mã học", "Hệ quản trị CSDL", "Kiểm thử phần mềm", "Thiết kế UI/UX", 
+            "Thương mại điện tử", "Quản trị mạng", "Lập trình Python", "Lập trình C#",
+            "Mạng nơ-ron nhân tạo", "Phát triển game", "Hệ thống nhúng", "Thực tế ảo (VR/AR)"
+        ];
+        const docTypes = ["Đề thi cuối kỳ", "Đề thi giữa kỳ", "Slide bài giảng", "Ghi chép (Note)", "Bài tập lớn", "Báo cáo đồ án", "Tài liệu tham khảo", "Ngân hàng câu hỏi"];
+        
+        const subName = itSubjects[(idNum * 7) % itSubjects.length];
+        const typeName = docTypes[(idNum * 3) % docTypes.length];
+        
+        doc.tieu_de = typeName + " - " + subName + " (Chương " + ((idNum % 7)+1) + ")";
+    }
+
+    // Auto-assign random price (Free or VIP) for mock generated items
+    if (doc.gia_xu === undefined || (typeof doc.gia_xu === 'string' && doc.gia_xu.includes('gia_xu'))) {
+        const idNum = parseInt(doc.id) || Math.floor(Math.random() * 100);
+        doc.gia_xu = (idNum % 3 === 0) ? (10 + (idNum % 5) * 5) : 0; 
+    }
+
+    // Assign strictly UNIQUE beautiful images for mock items using Picsum Seed based on ID
+    if (!doc.anh_bia || doc.anh_bia.includes('cloudflare-ipfs') || doc.anh_bia.includes('fakerjs.dev') || doc.anh_bia.includes('avatar') || doc.anh_bia.includes('placeholder')) {
+        const idNum = parseInt(doc.id) || Math.floor(Math.random() * 10000);
+        // Using picsum seed guarantees a completely unique image for every single ID
+        const promptText = encodeURIComponent("University IT Course " + (doc.tieu_de || "document"));
+        doc.anh_bia = `https://image.pollinations.ai/prompt/${promptText}?width=600&height=400&nologo=true&seed=${idNum * 123}`;
+    }
+    
+    // Assign subject ID realistically
+    if (doc.id_mon_hoc === undefined || (typeof doc.id_mon_hoc === 'string' && doc.id_mon_hoc.includes('id_mon_hoc'))) {
+         const idNum = parseInt(doc.id) || Math.floor(Math.random() * 100);
+         doc.id_mon_hoc = (idNum % 40) + 1; // Assuming we will have many subjects
+    }
+
+    const title = doc.tieu_de || doc.ten_tai_lieu || doc.id || "Tài liệu học tập";
     const statusRaw = String(doc.trang_thai || SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED).toLowerCase();
     const status = statusRaw === "pending" ? SCHOLARHUB_CONFIG.DOC_STATUS.PENDING : SCHOLARHUB_CONFIG.DOC_STATUS.APPROVED;
     return {
@@ -206,23 +243,10 @@ function fetchAndNormalizeDocuments() {
                 return !isJunkDocument(d);
             });
             const localList = getLocalDocuments();
-            let mergedList = dedupeDocumentsByTitleAndImage(apiList.concat(localList));
-            if (mergedList.length >= 6) {
-                return mergedList;
-            }
-            return seedDocumentsToApi().then(function () {
-                return api.getAllDocuments();
-            }).then(function (all) {
-                const reseeded = (all || []).map(normalizeDocument).filter(function (d) {
-                    return !isJunkDocument(d);
-                });
-                mergedList = dedupeDocumentsByTitleAndImage(reseeded.concat(localList));
-                if (mergedList.length >= 6) return mergedList;
-                return dedupeDocumentsByTitleAndImage(SEED_DOCUMENTS.map(normalizeDocument).concat(localList));
-            });
+            return dedupeDocumentsByTitleAndImage(apiList.concat(localList));
         })
         .catch(function () {
-            return dedupeDocumentsByTitleAndImage(SEED_DOCUMENTS.map(normalizeDocument).concat(getLocalDocuments()));
+            return dedupeDocumentsByTitleAndImage(getLocalDocuments());
         });
 }
 
@@ -238,10 +262,16 @@ function findUserByEmailData(email) {
     const em = (email || "").toLowerCase().trim();
     ensureDemoLocalUsers();
 
+    // We do NOT return local immediately if they have an API equivalent,
+    // otherwise we might miss data updates. 
+    // We only return local immediately if they are purely a local mock user.
     const local = getLocalUsers().find(function (u) {
         return (u.email || "").toLowerCase() === em;
     });
-    if (local) return Promise.resolve(local);
+    if (local && String(local.id).startsWith("local")) {
+        // Return purely local demo users immediately
+        return Promise.resolve(local);
+    }
 
     return api.getAllUsers()
         .then(function (users) {
@@ -250,13 +280,25 @@ function findUserByEmailData(email) {
                 const u = list[i];
                 const mail = (u.email || "").toLowerCase();
                 if (mail === em) {
-                    return normalizeApiUser(u);
+                    const normUser = normalizeApiUser(u);
+                    // MERGE WITH LOCAL TO GET THE LATEST PASSWORD
+                    const locals = getLocalUsers();
+                    const localSaved = locals.find(loc => String(loc.id) === String(normUser.id) || (loc.email || "").toLowerCase() === em);
+                    if (localSaved) {
+                        return { ...normUser, ...localSaved };
+                    }
+                    return normUser;
                 }
             }
             return null;
         })
-        .catch(function () {
-            return null;
+        .catch(function (err) {
+            console.error("api.getAllUsers failed in findUserByEmailData:", err);
+            // If API fails, AT LEAST return the local demo user if it exists!
+            const fallback = getLocalUsers().find(function (u) {
+                return (u.email || "").toLowerCase() === em;
+            });
+            return fallback || null;
         });
 }
 
@@ -361,6 +403,13 @@ function deleteLocalSubject(id) {
     return Promise.resolve();
 }
 
+function deleteLocalUserById(id) {
+    const list = getLocalUsers().filter(function (u) {
+        return String(u.id) !== String(id);
+    });
+    saveLocalUsers(list);
+}
+
 function initScholarHubData() {
     getLocalSubjects();
     ensureDemoLocalUsers();
@@ -385,3 +434,4 @@ window.getLocalDocuments = getLocalDocuments;
 window.saveLocalDocuments = saveLocalDocuments;
 window.upsertLocalDocument = upsertLocalDocument;
 window.deleteLocalDocumentById = deleteLocalDocumentById;
+window.deleteLocalUserById = deleteLocalUserById;
