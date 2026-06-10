@@ -691,7 +691,7 @@ window.toggleModelSelect = function toggleModelSelect() {
                 keyInput.value = "";
             }
         }
-    }
+    } 
 };
 
 window.changeAIModel = function changeAIModel(modelId) {
