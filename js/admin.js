@@ -624,6 +624,21 @@ function loadAdminChats() {
     openAdminChatThread(adminSelectedChatUser);
 }
 
+function deleteAdminChatThread(userKey) {
+    if (!confirm("Bạn có chắc chắn muốn xóa hội thoại với " + userKey + "?")) return;
+    const store = getAdminChatStore();
+    delete store[userKey];
+    saveAdminChatStore(store);
+    if (adminSelectedChatUser === userKey) {
+        adminSelectedChatUser = null;
+        const titleEl = document.getElementById("admin-chat-title");
+        const threadBox = document.getElementById("admin-chat-thread");
+        if (titleEl) titleEl.textContent = "Nội dung chat";
+        if (threadBox) threadBox.innerHTML = '<p class="text-muted mb-0">Chưa có hội thoại.</p>';
+    }
+    loadAdminChats();
+}
+
 function openAdminChatThread(userKey) {
     adminSelectedChatUser = userKey;
     const titleEl = document.getElementById("admin-chat-title");

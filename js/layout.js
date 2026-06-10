@@ -139,9 +139,9 @@ function renderRightbar() {
         </div>
         <div class="lecturer-rail">
             <div class="lecturer-track" id="lecturer-track">
-                ${renderLecturerCard("https://scontent.fhan15-1.fna.fbcdn.net/v/t39.30808-6/544828771_24235895536096060_1163072788702630779_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeHgh7CktVJgcBbBsIPm0zRpksMOWwQeP3qSww5bBB4_egaN8OiFtgLA2QMRVHmbEqtYoaSfNT8_rX0PSj9wzgHF&_nc_ohc=X9iEIAoAl_0Q7kNvwFRJivs&_nc_oc=Ado_sXwcZ5ZN1kQCm1GdNs2tqdf61VuGwX7HEelwXSNN6fNOm-IZYNH0YqYPadCDrkMrZZqzkIdj--9B0g7RRZne&_nc_zt=23&_nc_ht=scontent.fhan15-1.fna&_nc_gid=n--Ns5MXyaB7cTlt3ETUWA&_nc_ss=7b2a8&oh=00_Af_6ZQ8zYp0wDIJWsW0YeHVglcNDiNN6G0LGww1WAkvEkw&oe=6A21F60B","Thầy Lê Văn Phong","Giảng viên Khoa CNTT","Chuyên ngành: Khoa học dữ liệu")}
-                ${renderLecturerCard("https://scontent.fhan15-1.fna.fbcdn.net/v/t39.30808-1/616166985_2632255180473473_947613393094388330_n.jpg?stp=c0.18.1365.1365a_dst-jpg_s100x100_tt6&_nc_cat=105&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeE0FrMJDEufitx8sn-a6Aqbho0IVnihgKKGjQhWeKGAoiBtTXkJrMAzYTLVIwdBhVjW_StgL0IlAfTHDFMThsUQ&_nc_ohc=weISBRKzV_YQ7kNvwH3hRO_&_nc_oc=AdrOAWX8XSUOEBw_YqcSUgZRuWj8kfy23Bqkrq1eyddoBcq7TUCB8XLVtbaO69DRXq3nG608d4MqyA1aamoIYlaQ&_nc_zt=24&_nc_ht=scontent.fhan15-1.fna&_nc_gid=DVf0dsXvGb9gJv13S8NYgA&_nc_ss=7b2a8&oh=00_Af_8HFORG9w3o7bB1-ioNyiUYb8A7wo8rEE6twfehFepyA&oe=6A21F599","Thầy Nguyễn Thế Huy Hoàng","Giảng viên Bộ môn CSDL","Chuyên ngành: Cơ sở dữ liệu")}
-                ${renderLecturerCard("https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-1/658147276_2730602617322797_4675060846371236992_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=103&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFty7T3A2M0V8F8LirxkrQK4whgIR8Q377jCGAhHxDfvnR5eLMbPjIFhgpp7XAcLXgcJ2zE4enPTgywMfj2DYGl&_nc_ohc=DIeKzrLQ1j0Q7kNvwGTg_QM&_nc_oc=AdrM06Xc3HT3jV3b3SbrbZu0ZVDO-495un3YPURl-zOIOO1BXVizOVFjH2TL2Th2JqA0M_Ao_9GwSZsV_jCs5bIS&_nc_zt=24&_nc_ht=scontent.fhan15-2.fna&_nc_gid=UwUzjNrZOFy4q1BGL0mOGg&_nc_ss=7b2a8&oh=00_Af84RfieMACT46EDMjLGDIurQJTk4sljGH0DJ1GOZUrLHw&oe=6A21F28A","Thầy Trần Hải Anh","Giảng viên Bộ môn KT&HDHMT","Chuyên ngành: AI ứng dụng")}
+                ${renderLecturerCard("https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-6/544828771_24235895536096060_1163072788702630779_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x2048&ctp=s2048x2048&_nc_cat=105&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeHgh7CktVJgcBbBsIPm0zRpksMOWwQeP3qSww5bBB4_egaN8OiFtgLA2QMRVHmbEqtYoaSfNT8_rX0PSj9wzgHF&_nc_ohc=gpDkC6ru9V4Q7kNvwEyk_ok&_nc_oc=Adqthd1zyQq_y6pRtGaN0Oly_3uxibU7wK7BatzrsKyOD8yi9dhHTpsa-Zowm94LoIVUTlT5MFMdscZNCZPiNzrc&_nc_zt=23&_nc_ht=scontent.fhan2-4.fna&_nc_gid=hqNzDYy4l-UIwAe8YsCtjA&_nc_ss=7b2a8&oh=00_Af9QTIKJKuSt1-vMG2Zboj65lKCCvKlFKpd58I6LXmhFuQ&oe=6A2F5D4B","Thầy Lê Văn Phong","Giảng viên Khoa CNTT","Chuyên ngành: Khoa học dữ liệu")}
+                ${renderLecturerCard("https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/616166985_2632255180473473_947613393094388330_n.jpg?stp=c0.18.1365.1365a_dst-jpg_tt6&cstp=mx1365x1365&ctp=s200x200&_nc_cat=105&ccb=1-7&_nc_sid=1d2534&_nc_eui2=AeE0FrMJDEufitx8sn-a6Aqbho0IVnihgKKGjQhWeKGAoiBtTXkJrMAzYTLVIwdBhVjW_StgL0IlAfTHDFMThsUQ&_nc_ohc=TSe_QiySl6oQ7kNvwG2Qyjr&_nc_oc=AdpwlxJU38BouUldCdk5k0X9roP1kNRZDUE7ss8yM3Ppaf2TG82YmwCYosha_RcziXGbC7r6Aqt6omykVZpQ2PAY&_nc_zt=24&_nc_ht=scontent.fhan2-4.fna&_nc_gid=1bOh8D7JiY8LkQ7cXonQcw&_nc_ss=7b2a8&oh=00_Af_YoxxYcc5PCsQ1j6FP6IuzgLb5c7ketA9_pLlD5_lHfA&oe=6A2F5CD9","Thầy Nguyễn Thế Huy Hoàng","Giảng viên Bộ môn CSDL","Chuyên ngành: Cơ sở dữ liệu")}
+                ${renderLecturerCard("https://scontent.fhan20-1.fna.fbcdn.net/v/t39.30808-1/658147276_2730602617322797_4675060846371236992_n.jpg?stp=dst-jpg_tt6&cstp=mx1920x1920&ctp=s200x200&_nc_cat=103&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeFty7T3A2M0V8F8LirxkrQK4whgIR8Q377jCGAhHxDfvnR5eLMbPjIFhgpp7XAcLXgcJ2zE4enPTgywMfj2DYGl&_nc_ohc=4VQY8AuhHAMQ7kNvwGKBmPC&_nc_oc=Ado3hpFBMIvtZ-wx6sTELhl4X-nRCsNokBhYtR40NVQ_pe1zrN_CalrYkSur3hqbDZL0e_r69GfYg9CXDbxDpvcB&_nc_zt=24&_nc_ht=scontent.fhan20-1.fna&_nc_gid=lcq3q8lA7Z9TxkFe7bnHiA&_nc_ss=7b2a8&oh=00_Af-xHvLfsZjJ1WprtQG8eshb4l-jNczi4-3yY1Gda2Qi1A&oe=6A2F59CA","Thầy Trần Hải Anh","Giảng viên Bộ môn KT&HDHMT","Chuyên ngành: AI ứng dụng")}
             </div>
         </div>
     </aside>`;
@@ -192,15 +192,42 @@ function renderFooter() {
             <p class="small text-center mb-0 opacity-75">© Bản quyền thuộc về ScholarHub — Nhóm 11 FIT-DNU</p>
         </div>
     </footer>
-    <button type="button" class="floating-chat" title="Hỗ trợ" onclick="toggleSupportChat()"><i class="fa-solid fa-comments"></i></button>
+    <button type="button" class="floating-chat" title="Hỗ trợ ScholarBot AI" onclick="toggleSupportChat()"><i class="fa-solid fa-robot"></i></button>
     <div class="support-chat-box d-none" id="support-chat-box">
-        <div class="support-chat-header">Hỗ trợ ScholarHub <button class="btn-close btn-close-white btn-sm" type="button" onclick="toggleSupportChat()"></button></div>
-        <div class="support-chat-body" id="support-chat-body">
-            <div class="chat-msg bot">Xin chào! Bạn cần hỗ trợ gì về tài liệu?</div>
+        <div class="support-chat-header">
+            <div class="support-chat-header-top">
+                <span><i class="fa-solid fa-robot me-1"></i>Hỗ trợ trực tuyến</span>
+                <div class="d-flex align-items-center gap-1">
+                    <button class="btn btn-sm btn-outline-light border-0 py-0 px-1" type="button" onclick="toggleModelSelect()" title="Đổi Model AI"><i class="fa-solid fa-gear" style="font-size:.72rem"></i></button>
+                    <button class="btn btn-sm btn-outline-light border-0 py-0 px-1" type="button" onclick="clearChatBox()" title="Xóa lịch sử chat"><i class="fa-solid fa-trash-can" style="font-size:.72rem"></i></button>
+                    <button class="btn-close btn-close-white btn-sm" type="button" onclick="toggleSupportChat()"></button>
+                </div>
+            </div>
+            <div id="ai-model-select-wrapper" class="d-none bg-light p-2 border-bottom">
+                <label class="form-label text-dark small mb-1">Chọn AI Model:</label>
+                <div class="input-group input-group-sm mb-2">
+                    <select id="ai-model-select" class="form-select form-select-sm text-dark" onchange="changeAIModel(this.value)">
+                        <option value="openrouter/free">OpenRouter Free (Mặc định)</option>
+                        <option value="google/gemini-2.5-flash-free">Gemini 2.5 Flash</option>
+                        <option value="meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (Free)</option>
+                        <option value="qwen/qwen-2.5-coder-32b-instruct:free">Qwen 2.5 (Free)</option>
+                    </select>
+                </div>
+                <label class="form-label text-dark small mb-1">OpenRouter API Key (Tùy chọn):</label>
+                <div class="input-group input-group-sm">
+                    <input type="password" id="ai-apikey-input" class="form-control form-control-sm" placeholder="Nhập API Key...">
+                    <button class="btn btn-secondary" type="button" onclick="saveAIApiKey()">Lưu</button>
+                </div>
+            </div>
+            <div class="chat-mode-tabs">
+                <button class="chat-mode-btn active" id="tab-chat-ai" onclick="switchChatMode('ai')">ScholarBot AI</button>
+                <button class="chat-mode-btn" id="tab-chat-admin" onclick="switchChatMode('admin')">Admin</button>
+            </div>
         </div>
+        <div class="support-chat-body" id="support-chat-body"></div>
         <div class="support-chat-input">
-            <input type="text" id="support-chat-input" class="form-control form-control-sm" placeholder="Nhập câu hỏi...">
-            <button type="button" class="btn btn-primary btn-sm" id="support-chat-send">Gửi</button>
+            <input type="text" id="support-chat-input" class="form-control form-control-sm" placeholder="Nhập tin nhắn..." onkeydown="if(event.key==='Enter')document.getElementById('support-chat-send').click()">
+            <button type="button" class="btn btn-primary btn-sm" id="support-chat-send"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>`;
 }
@@ -346,6 +373,28 @@ function toggleSupportChat() {
     }
 }
 
+let currentChatMode = 'ai'; // 'ai' or 'admin'
+
+function switchChatMode(mode) {
+    currentChatMode = mode;
+    document.getElementById('tab-chat-ai').classList.toggle('active', mode === 'ai');
+    document.getElementById('tab-chat-admin').classList.toggle('active', mode === 'admin');
+    
+    const input = document.getElementById('support-chat-input');
+    if (input) {
+        input.placeholder = mode === 'ai' ? 'Hỏi ScholarBot...' : 'Nhắn tin cho Admin...';
+    }
+    renderChatForCurrentUser();
+}
+
+function clearChatBox() {
+    if (currentChatMode === 'ai') {
+        clearAIChat();
+    } else {
+        clearAdminChat();
+    }
+}
+
 function getCurrentChatUserKey() {
     const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
     if (user && user.id) return String(user.id);
@@ -380,35 +429,115 @@ function appendChatMessage(userKey, sender, text) {
 function renderChatForCurrentUser() {
     const body = document.getElementById("support-chat-body");
     if (!body) return;
-    const userKey = getCurrentChatUserKey();
-    const store = getChatStore();
-    const msgs = store[userKey] || [];
-    if (!msgs.length) {
-        body.innerHTML = '<div class="chat-msg bot">Xin chào! Bạn cần hỗ trợ gì về tài liệu?</div>';
-        return;
+    
+    if (currentChatMode === 'ai') {
+        if (body.children.length === 0 || body.innerHTML.includes('Admin')) {
+            clearAIChat();
+        }
+    } else {
+        const userKey = getCurrentChatUserKey();
+        const store = getChatStore();
+        const msgs = store[userKey] || [];
+        if (!msgs.length) {
+            body.innerHTML = '<div class="chat-msg bot"><i class="fa-solid fa-headset chat-bot-icon"></i>Xin chào! Admin đã nhận được kết nối. Bạn cần giúp gì ạ?</div>';
+            return;
+        }
+        body.innerHTML = msgs.map(function (m) {
+            return '<div class="chat-msg ' + (m.sender === "user" ? "user" : "bot") + '">' + escapeHtml(m.text) + "</div>";
+        }).join("");
+        body.scrollTop = body.scrollHeight;
     }
-    body.innerHTML = msgs.map(function (m) {
-        return '<div class="chat-msg ' + (m.sender === "user" ? "user" : "bot") + '">' + escapeHtml(m.text) + "</div>";
-    }).join("");
+}
+
+function addChatBubble(body, sender, html) {
+    var div = document.createElement("div");
+    div.className = "chat-msg " + sender;
+    if (sender === "bot") {
+        div.innerHTML = '<i class="fa-solid fa-robot chat-bot-icon"></i>' + html;
+    } else {
+        div.innerHTML = html;
+    }
+    body.appendChild(div);
     body.scrollTop = body.scrollHeight;
 }
 
+function showTypingIndicator(body) {
+    var div = document.createElement("div");
+    div.className = "chat-msg bot typing-indicator";
+    div.id = "ai-typing";
+    div.innerHTML = '<i class="fa-solid fa-robot chat-bot-icon"></i><span class="typing-dots"><span></span><span></span><span></span></span>';
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    var el = document.getElementById("ai-typing");
+    if (el) el.remove();
+}
+
+function clearAIChat() {
+    if (typeof GeminiChat !== "undefined") GeminiChat.clearHistory();
+    var body = document.getElementById("support-chat-body");
+    if (body) {
+        body.innerHTML = '<div class="chat-msg bot"><i class="fa-solid fa-robot chat-bot-icon"></i>Xin chào! Mình là <strong>ScholarBot</strong> — trợ lý AI của ScholarHub. Bạn cần hỗ trợ gì?</div>';
+    }
+}
+
+function clearAdminChat() {
+    const userKey = getCurrentChatUserKey();
+    const store = getChatStore();
+    store[userKey] = [];
+    saveChatStore(store);
+    var body = document.getElementById('support-chat-body');
+    if (body) {
+        body.innerHTML = '<div class="chat-msg bot"><i class="fa-solid fa-headset chat-bot-icon"></i>Xin chào! Admin đã nhận được kết nối. Bạn cần giúp gì ạ?</div>';
+    }
+}
+
 document.addEventListener("click", function (e) {
-    if (e.target && e.target.id === "support-chat-send") {
-        const input = document.getElementById("support-chat-input");
-        const body = document.getElementById("support-chat-body");
-        const text = input && input.value ? input.value.trim() : "";
-        if (!text || !body) return;
+    var btn = e.target.closest && e.target.closest("#support-chat-send");
+    if (!btn) return;
+
+    const input = document.getElementById("support-chat-input");
+    const body = document.getElementById("support-chat-body");
+    const text = input && input.value ? input.value.trim() : "";
+    if (!text || !body) return;
+
+    if (currentChatMode === 'ai') {
+        addChatBubble(body, "user", escapeHtml(text));
+        input.value = "";
+        input.disabled = true;
+        btn.disabled = true;
+
+        showTypingIndicator(body);
+
+        if (typeof GeminiChat !== "undefined") {
+            GeminiChat.sendMessage(text, function (reply) {
+                removeTypingIndicator();
+                addChatBubble(body, "bot", GeminiChat.formatResponse(reply));
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+            }, function (err) {
+                removeTypingIndicator();
+                addChatBubble(body, "bot error", "Xin lỗi, có lỗi xảy ra: " + escapeHtml(err));
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+            });
+        } else {
+            removeTypingIndicator();
+            addChatBubble(body, "bot error", "AI chưa sẵn sàng. Vui lòng thử lại sau.");
+            input.disabled = false;
+            btn.disabled = false;
+        }
+    } else {
+        // Admin chat mode
+        input.value = "";
         const userKey = getCurrentChatUserKey();
         appendChatMessage(userKey, "user", text);
-        input.value = "";
-        renderChatForCurrentUser();
-        showToast("Đã gửi tin nhắn tới admin", "success");
+        renderChatForCurrentUser(); // update ui immediately
     }
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    renderChatForCurrentUser();
 });
 
 function bindConsultForm() {
@@ -527,4 +656,57 @@ window.updateHeaderUserUI = updateHeaderUserUI;
 window.renderHeader = renderHeader;
 window.renderBrandLink = renderBrandLink;
 window.toggleSupportChat = toggleSupportChat;
+window.clearAIChat = clearAIChat;
 window.publishUserActivity = publishUserActivity;
+
+window.switchChatMode = switchChatMode;
+window.clearChatBox = clearChatBox;
+
+
+window.toggleModelSelect = function toggleModelSelect() {
+    const wrapper = document.getElementById('ai-model-select-wrapper');
+    if (wrapper) wrapper.classList.toggle('d-none');
+    
+    if (typeof GeminiChat !== 'undefined') {
+        const select = document.getElementById('ai-model-select');
+        const keyInput = document.getElementById('ai-apikey-input');
+        
+        if (select) {
+            const current = GeminiChat.getModel();
+            const optionExists = Array.from(select.options).some(opt => opt.value === current);
+            if (!optionExists) {
+                const opt = document.createElement('option');
+                opt.value = current;
+                opt.text = current + ' (Tùy chỉnh)';
+                select.appendChild(opt);
+            }
+            select.value = current;
+        }
+        
+        if (keyInput) {
+            const k = GeminiChat.getApiKey();
+            if (k && k !== "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") {
+                keyInput.value = k;
+            } else {
+                keyInput.value = "";
+            }
+        }
+    }
+};
+
+window.changeAIModel = function changeAIModel(modelId) {
+    if (typeof GeminiChat !== 'undefined') {
+        GeminiChat.setModel(modelId);
+        showToast('Đã đổi model AI thành: ' + modelId, 'success');
+        document.getElementById('ai-model-select-wrapper').classList.add('d-none');
+    }
+};
+
+window.saveAIApiKey = function saveAIApiKey() {
+    if (typeof GeminiChat !== 'undefined') {
+        const val = document.getElementById('ai-apikey-input').value.trim();
+        GeminiChat.setApiKey(val);
+        showToast(val ? 'Đã lưu API Key thành công' : 'Đã xóa API Key, dùng mặc định', 'success');
+        document.getElementById('ai-model-select-wrapper').classList.add('d-none');
+    }
+};
