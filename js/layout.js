@@ -191,7 +191,7 @@ function renderFooter() {
                 </div>
             </div>
             <hr class="border-light opacity-25 my-3">
-            <p class="small text-center mb-0 opacity-75">© Bản quyền thuộc về ScholarHub — Nhóm 11 FIT-DNU</p>
+            <p class="small text-center mb-0 opacity-75">© Bản quyền thuộc về ScholarHub — DEVFOUR</p>
         </div>
     </footer>
     <button type="button" class="floating-chat" title="Hỗ trợ ScholarBot AI" onclick="toggleSupportChat()"><i class="fa-solid fa-robot"></i></button>
