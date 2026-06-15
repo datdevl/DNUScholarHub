@@ -345,6 +345,7 @@ function showAdminModal(type, data) {
         if (title) title.textContent = adminEditId ? "Sửa tài liệu" : "Thêm tài liệu";
         body.innerHTML = buildDocumentFormHtml(data);
         fillSubjectSelectInForm();
+        setTimeout(window.setupAdminFileUploadListener, 100);
     } else {
         if (title) title.textContent = adminEditId ? "Sửa môn học" : "Thêm môn học";
         body.innerHTML = buildSubjectFormHtml(data);
@@ -367,6 +368,19 @@ function fillSubjectSelectInForm() {
         }
     });
 }
+
+window.setupAdminFileUploadListener = function() {
+    const fileInput = document.getElementById("file_upload");
+    const fileNameEl = document.getElementById("file-upload-name");
+    if (fileInput && fileNameEl) {
+        fileInput.addEventListener("change", function () {
+            const f = fileInput.files && fileInput.files[0];
+            if (f) {
+                fileNameEl.textContent = "Đã chọn: " + f.name;
+            }
+        });
+    }
+};
 
 function buildDocumentFormHtml(data) {
     const d = data || {};
