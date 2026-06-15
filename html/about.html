@@ -4,44 +4,199 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giới thiệu — ScholarHub</title>
+    <!-- Bootstrap 5 & FontAwesome 6 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
     <link href="../css/scholarhub.css" rel="stylesheet">
     <link rel="icon" href="../logo.png" type="image/png">
 </head>
-<body data-page="about">
-    <nav class="navbar navbar-light bg-white border-bottom py-3">
+<body data-page="about" class="bg-light">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3 sticky-top shadow-sm">
         <div class="container">
-            <a href="../index.html" class="site-brand site-brand--header">
+            <a href="../index.html" class="site-brand site-brand--header me-auto">
                 <img src="../logo.png" alt="ScholarHub" class="site-brand__img" width="180" height="48">
             </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="documents.html" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-none d-sm-inline-block">Kho tài liệu</a>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">FIT DNU</span>
+            </div>
         </div>
     </nav>
+
+    <!-- Main Content -->
     <div class="container py-5">
-        <div class="row g-5">
+        <div class="row g-4 g-lg-5">
+            
+            <!-- Cột trái: Nội dung chính -->
             <div class="col-lg-8">
-                <h1 class="display-6 fw-bold">Về ScholarHub</h1>
-                <p class="lead text-muted">Nền tảng chia sẻ và tìm kiếm tài liệu học tập trực tuyến dành cho sinh viên Đại học Đại Nam.</p>
-                <h5 class="mt-4">Tính năng sinh viên</h5>
-                <ul>
-                    <li>Tìm tài liệu, lọc theo môn học / năm học / loại</li>
-                    <li>Xem mô tả, link tải, đánh dấu yêu thích</li>
-                    <li>Đăng tải tài liệu (chờ duyệt Pending)</li>
-                    <li>Đếm lượt xem qua PUT API MockAPI</li>
-                </ul>
-                <h5 class="mt-4">Công nghệ</h5>
-                <p>JavaScript thuần, Fetch API, jQuery, Bootstrap 5, MockAPI.io — deploy Vercel.</p>
-            </div>
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm p-4">
-                    <h6 class="fw-bold">Liên kết nhanh</h6>
-                    <a href="documents.html" class="d-block mb-2">→ Kho tài liệu</a>
-                    <a href="upload.html" class="d-block mb-2">→ Đăng tải</a>
-                    <a href="admin.html" class="d-block">→ Quản trị</a>
+                <!-- Header Section -->
+                <div class="mb-5">
+                    <span class="badge bg-primary text-white mb-2 px-3 py-2 rounded-pill text-uppercase tracking-wider fs-7 fw-semibold">Dự án Sinh viên</span>
+                    <h1 class="display-5 fw-bold text-dark mb-3">Về ScholarHub</h1>
+                    <p class="lead text-secondary">
+                        <strong>ScholarHub</strong> là nền tảng lưu trữ, chia sẻ và tìm kiếm tài liệu học tập thông minh trực tuyến, được phát triển chuyên biệt dành riêng cho sinh viên Khoa Công nghệ Thông tin (FIT) – Trường Đại học Đại Nam (DNU).
+                    </p>
+                </div>
+
+                <hr class="my-4 opacity-25">
+
+                <!-- Hệ sinh thái tính năng đột phá -->
+                <h3 class="fw-bold text-dark mb-4"><i class="fa-solid fa-star text-warning me-2"></i>Tính năng nổi bật</h3>
+                
+                <div class="row g-3 mb-5">
+                    <!-- Client Features -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary-subtle text-primary p-3 rounded-3 me-3">
+                                    <i class="fa-solid fa-graduation-cap fa-xl"></i>
+                                </div>
+                                <h5 class="fw-bold m-0 text-dark">Dành cho Sinh viên</h5>
+                            </div>
+                            <ul class="list-unstyled flex-grow-1 mb-0 custom-list">
+                                <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Tìm kiếm & bộ lọc tài liệu thông minh theo môn học, năm học, phân loại.</li>
+                                <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Hệ thống <strong>Tài liệu VIP & Xu thưởng</strong> kích thích đóng góp cộng đồng.</li>
+                                <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Điểm danh thông minh bằng AI khuôn mặt <strong>EduAttend (face-api.js)</strong>.</li>
+                                <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Trợ lý ảo học tập <strong>ScholarBot AI</strong> kết nối OpenRouter linh hoạt.</li>
+                                <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i>Bảng xếp hạng cống hiến & Hỗ trợ giao diện <strong>Dark / Light Mode</strong> toàn diện.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Admin Features -->
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0 shadow-sm p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-danger-subtle text-danger p-3 rounded-3 me-3">
+                                    <i class="fa-solid fa-user-shield fa-xl"></i>
+                                </div>
+                                <h5 class="fw-bold m-0 text-dark">Dành cho Quản trị</h5>
+                            </div>
+                            <ul class="list-unstyled flex-grow-1 mb-0 custom-list">
+                                <li class="mb-2"><i class="fa-solid fa-shield text-danger me-2"></i>Dashboard tổng quan trực quan: thống kê user, tài liệu, dòng tiền Xu.</li>
+                                <li class="mb-2"><i class="fa-solid fa-shield text-danger me-2"></i>Hệ thống kiểm duyệt tài liệu tải lên tinh gọn (Pending → Approved).</li>
+                                <li class="mb-2"><i class="fa-solid fa-shield text-danger me-2"></i>Kênh Chat hỗ trợ trực tuyến 1-1 với sinh viên realtime.</li>
+                                <li class="mb-2"><i class="fa-solid fa-shield text-danger me-2"></i>Xuất báo cáo dữ liệu lịch sử điểm danh Face ID chuẩn xác.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Công nghệ Core -->
+                <h3 class="fw-bold text-dark mb-4"><i class="fa-solid fa-layer-group text-primary me-2"></i>Công nghệ & Nền tảng cốt lõi</h3>
+                <div class="card border-0 shadow-sm p-4 mb-5">
+                    <p class="text-secondary mb-4">Dự án tối ưu hóa xử lý mượt mà ở Frontend kết hợp lưu trữ linh hoạt qua RESTful API mô phỏng:</p>
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-brands fa-js text-warning fa-2x mb-2"></i>
+                                <h6 class="fw-bold mb-1">Vanilla JS & jQuery</h6>
+                                <span class="text-muted small">ES6 / DOM Events / AJAX</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-brands fa-bootstrap text-purple fa-2x mb-2" style="color: #7952B3;"></i>
+                                <h6 class="fw-bold mb-1">Bootstrap 5.3</h6>
+                                <span class="text-muted small">Grid / UI Components</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-solid fa-cloud-arrow-up text-info fa-2x mb-2"></i>
+                                <h6 class="fw-bold mb-1">Fetch API & MockAPI</h6>
+                                <span class="text-muted small">CRUD / PUT Counter</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-solid fa-robot text-success fa-2x mb-2"></i>
+                                <h6 class="fw-bold mb-1">OpenRouter API</h6>
+                                <span class="text-muted small">LLM (Gemini, Llama)</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-solid fa-eye text-primary fa-2x mb-2"></i>
+                                <h6 class="fw-bold mb-1">face-api.js</h6>
+                                <span class="text-muted small">AI Face Recognition</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4">
+                            <div class="p-3 bg-light rounded border text-center">
+                                <i class="fa-solid fa-server text-secondary fa-2x mb-2"></i>
+                                <h6 class="fw-bold mb-1">Vercel & Git</h6>
+                                <span class="text-muted small">CI/CD Static Deploy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Đội ngũ phát triển -->
+                <div class="p-4 rounded-4 bg-dark text-white shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h5 class="fw-bold mb-1"><i class="fa-solid fa-code-branch me-2 text-info"></i>Đội ngũ phát triển</h5>
+                        <p class="mb-0 text-white-50 small">Thực hiện bởi DevFour — Khoa Công nghệ Thông tin</p>
+                    </div>
+                    <span class="badge bg-light text-dark px-3 py-2 rounded-2 fw-bold">DNU © 2026</span>
                 </div>
             </div>
+
+            <!-- Cột phải: Sidebar Liên kết nhanh & Thông tin Kỹ thuật -->
+            <div class="col-lg-4">
+                <div class="position-sticky" style="top: 6rem;">
+                    
+                    <!-- Card Navigation -->
+                    <div class="card border-0 shadow-sm p-4 mb-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-compass me-2 text-primary"></i>Điều hướng nhanh</h5>
+                        <div class="d-grid gap-2">
+                            <a href="documents.html" class="btn btn-light text-start border-0 py-2.5 px-3 rounded-3 d-flex justify-content-between align-items-center hover-lift">
+                                <span><i class="fa-solid fa-folder-open text-warning me-2"></i>Kho tài liệu</span>
+                                <i class="fa-solid fa-chevron-right text-muted small"></i>
+                            </a>
+                            <a href="upload.html" class="btn btn-light text-start border-0 py-2.5 px-3 rounded-3 d-flex justify-content-between align-items-center hover-lift">
+                                <span><i class="fa-solid fa-cloud-arrow-up text-success me-2"></i>Đăng tải tài liệu</span>
+                                <i class="fa-solid fa-chevron-right text-muted small"></i>
+                            </a>
+                            <a href="admin.html" class="btn btn-light text-start border-0 py-2.5 px-3 rounded-3 d-flex justify-content-between align-items-center hover-lift">
+                                <span><i class="fa-solid fa-user-gear text-danger me-2"></i>Hệ thống Quản trị</span>
+                                <i class="fa-solid fa-chevron-right text-muted small"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card API & Config -->
+                    <div class="card border-0 shadow-sm p-4 bg-white">
+                        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-circle-info text-info me-2"></i>Thông tin MockAPI</h5>
+                        <div class="bg-light p-3 rounded-3 border mb-3">
+                            <span class="text-muted d-block small mb-1 fw-medium text-uppercase">Endpoint chính</span>
+                            <code class="text-break fs-7 text-primary">https://69fbe7b0fce564e25916fdc3.mockapi.io/api/v1/documents</code>
+                           
+                        </div>
+                        <div class="small text-secondary">
+                            <div class="d-flex justify-content-between border-bottom py-1.5">
+                                <span><code class="/documents">/documents</code></span>
+                                <span class="text-muted">Tài liệu học tập</span>
+                            </div>
+                            <div class="d-flex justify-content-between border-bottom py-1.5">
+                                <span><code class="/subjects">/subjects</code></span>
+                                <span class="text-muted">Danh mục môn học</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-1.5">
+                                                   
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
+
+    <!-- Footer Script -->
     <script src="../js/nav.js"></script>
 </body>
 </html>
