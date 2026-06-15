@@ -392,27 +392,45 @@ body {
     line-height: 1.2;
 }
 
-.lecturer-rail {
-    margin-top: 0.9rem;
-    overflow: hidden;
-    border-radius: 12px;
+.lecturer-rail{
+    overflow:hidden;
+    border-radius:12px;
 }
 
-.lecturer-track {
-    display: flex;
-    gap: 0.65rem;
-    animation: lecturer-slide-horizontal 14s linear infinite;
+.lecturer-track{
+    display:flex;
+    flex-direction:row;
+    gap:0.65rem;
+    animation: lecturer-slide-horizontal 14s infinite ease-in-out;
 }
 
-.lecturer-track .lecturer-mini-card {
-    flex: 0 0 100%;
+.lecturer-track .lecturer-mini-card{
+    flex:0 0 100%;
 }
-
 @keyframes lecturer-slide-horizontal {
-    0%, 28% { transform: translateX(0); }
-    34%, 61% { transform: translateX(calc(-100% - 0.65rem)); }
-    67%, 94% { transform: translateX(calc(-200% - 1.3rem)); }
-    100% { transform: translateX(0); }
+    0%, 16% {
+        transform: translateX(0);
+    }
+
+    20%, 36% {
+        transform: translateX(calc(-100% - 0.65rem));
+    }
+
+    40%, 56% {
+        transform: translateX(calc(-200% - 1.3rem));
+    }
+
+    60%, 76% {
+        transform: translateX(calc(-300% - 1.95rem));
+    }
+
+    80%, 96% {
+        transform: translateX(calc(-400% - 2.6rem));
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .admin-sidebar .site-brand--admin {
