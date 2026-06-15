@@ -138,5 +138,5 @@ npx serve .
 
 ---
 
-*Made with ❤️ for DNU students — Nhóm 11 FIT*
+*Made with ❤️ for DNU students — DevFour*
 "# ScholarHub" 
